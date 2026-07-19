@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Editor-local files
+.vscode/
+
+# Logs
+*.log
+
+# JavaScript and frontend outputs
+node_modules/
+.next/
+dist/
+coverage/
+
+# Foundry-generated outputs
+out/
+cache/
+broadcast/
