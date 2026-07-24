@@ -1,32 +1,53 @@
 # SPECTRA Documentation
 
-This directory contains the human-readable specification, security methodology, threat model, invariant definitions, findings, and project limitations for SPECTRA.
+This directory contains the human-readable research specifications, security
+models, evidence rules, findings, and limitations used by SPECTRA.
+
+## Current Documents
+
+| Document         | Status                       | Purpose                                                                                                              |
+| ---------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `state-model.md` | Working Specification v0.1.1 | Defines state boundaries, transition semantics, reachability, reconciliation conditions, and foundational invariants |
 
 ## Planned Documents
 
-The following files will be introduced progressively:
+Documents are introduced only when they contain substantive and reviewable
+material.
 
-* `specification.md`
-* `threat-model.md`
-* `invariants.md`
-* `methodology.md`
-* `findings.md`
-* `limitations.md`
+| Document               | Intended Purpose                                                    |
+| ---------------------- | ------------------------------------------------------------------- |
+| `project-charter.md`   | Frozen scope, research question, non-goals, and acceptance criteria |
+| `architecture.md`      | Components, data flow, and trust boundaries                         |
+| `methodology.md`       | Research, testing, tracing, and evidence-generation method          |
+| `threat-model.md`      | Assets, actors, adversaries, trust boundaries, and abuse cases      |
+| `invariants.md`        | Versioned invariant definitions and executable mappings             |
+| `findings.md`          | Source-backed and test-backed findings                              |
+| `limitations.md`       | Unsupported claims, exclusions, and unresolved risks                |
+| `evidence-register.md` | Claim-to-source, test, trace, and visualization mappings            |
 
-A document will be added only when it contains substantive and reviewable material.
+## Documentation Status
 
-## Documentation Rule
+A document may use one of the following statuses:
 
-Every important technical claim should be connected to at least one of the following:
+* **Draft** — structurally incomplete or under initial development;
+* **Working Specification** — complete enough to guide implementation but
+  still subject to test-driven revision;
+* **Candidate** — reviewed against its required evidence;
+* **Accepted** — approved for the current project version;
+* **Superseded** — replaced by a later version.
+
+## Evidence Rule
+
+Every material technical claim must connect to one or more of the following:
 
 * an official specification;
-* a state-machine definition;
-* a contract implementation;
+* an explicit state-machine definition;
+* an implementation;
 * an executable test;
 * an adversarial trace;
 * a measurement;
-* a reproducible result.
+* a reproducible evidence record.
 
-## Current Status
-
-Day 0 — documentation workspace initialized.
+Events, transaction statuses, assertions, static-analysis warnings, and visual
+outputs are supporting evidence. None is treated as independent proof of
+security.
