@@ -1,0 +1,20 @@
+{
+  "name": "spectra-asset-protocol-lab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Executable research laboratory for cross-standard asset semantics, protocol invariants, and settlement-risk analysis.",
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "check": "npm run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "typescript": "7.0.2"
+  }
+}
