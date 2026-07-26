@@ -9,9 +9,10 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "tsc --project tsconfig.json",
+    "build": "npm run clean && tsc --project tsconfig.json",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "check": "npm run typecheck"
+    "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
+    "check": "npm run typecheck && npm test"
   },
   "devDependencies": {
     "@types/node": "24.13.3",
