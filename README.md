@@ -6,11 +6,18 @@
 > asset-standard semantics, protocol invariants, interoperability failures,
 > and financial-settlement risks across blockchain ecosystems.
 
-**Repository:** `spectra-asset-protocol-lab`
-**Current phase:** Research foundation and executable-model preparation
-**Project type:** Independent protocol-security and financial-infrastructure research laboratory
-**Primary language:** English
-**Status:** Experimental and under active development
+| Field                | Current value                                                                  |
+| -------------------- | ------------------------------------------------------------------------------ |
+| Repository           | `spectra-asset-protocol-lab`                                                   |
+| Current phase        | Executable state-core foundation                                               |
+| Project type         | Independent protocol-security and financial-infrastructure research laboratory |
+| Primary language     | English                                                                        |
+| Runtime family       | Node.js 24 LTS                                                                 |
+| TypeScript           | 7.0.2                                                                          |
+| Specification        | Working Specification v0.1.1                                                   |
+| Status               | Experimental and under active development                                      |
+| Production readiness | Not claimed                                                                    |
+| Formal verification  | Not claimed                                                                    |
 
 ---
 
@@ -19,30 +26,62 @@
 SPECTRA is an independent research and engineering project for studying how
 fungible-asset standards behave across different blockchain ecosystems.
 
-The project focuses on a central problem:
+The project investigates a central problem:
 
 > Similar interfaces do not necessarily imply equivalent execution,
-> authorization, accounting, failure, event, or settlement behavior.
+> authorization, accounting, failure, event, precision, or settlement
+> behavior.
 
-SPECTRA will transform official standard requirements into:
+An integration may expose familiar functions such as:
 
-* normalized machine-readable manifests;
-* explicit state-transition models;
-* executable protocol scenarios;
-* adversarial contract variants;
-* security invariant evaluations;
-* deterministic execution traces;
-* conformance evidence;
-* technical visualizations.
+```text
+transfer
+approve
+transferFrom
+balanceOf
+totalSupply
+```
 
-The initial comparative scope covers:
+while still differing materially in:
 
-* Ethereum ERC-20;
-* TRON TRC-20;
-* BNB Smart Chain BEP-20;
-* Algorand ARC-200.
+* return-value behavior;
+* failure signaling;
+* authorization rules;
+* event semantics;
+* fee and transfer realization;
+* decimal representation;
+* supply controls;
+* privileged operations;
+* execution-environment assumptions;
+* bridge and custody accounting;
+* settlement finality.
 
-The project also develops an experimental research profile named SASP-1.
+SPECTRA converts these differences into explicit, testable, and reviewable
+technical artifacts.
+
+The intended evidence path is:
+
+```text
+Official Requirement
+        ↓
+Normalized Requirement
+        ↓
+Mathematical State Model
+        ↓
+Executable TypeScript Model
+        ↓
+Reference or Adversarial Implementation
+        ↓
+Executable Test or Scenario
+        ↓
+Deterministic Trace
+        ↓
+Invariant or Conformance Result
+        ↓
+Evidence Record
+        ↓
+Human-Readable Visualization
+```
 
 ---
 
@@ -54,16 +93,19 @@ under a shared executable model so that semantic inconsistencies, security
 failures, and financial-settlement divergences can be detected before
 integration?
 
-This question is decomposed into smaller research problems:
+This question is decomposed into the following research problems:
 
 1. Which behaviors are explicitly required by each official standard?
 2. Which behaviors are optional, implementation-specific, or unspecified?
 3. Can interface compatibility be separated from behavioral compatibility?
-4. Can protocol behavior be represented as deterministic state transitions?
-5. Which invariants remain valid across different asset implementations?
+4. Can protocol behavior be expressed as deterministic state transitions?
+5. Which invariants remain meaningful across different asset implementations?
 6. When can on-chain state and off-chain accounting diverge?
-7. Which evidence is sufficient to support a conformance or security claim?
-8. Can vulnerable and secured behaviors be compared under identical inputs?
+7. Which evidence is sufficient to support a conformance claim?
+8. Which evidence is sufficient to support a security finding?
+9. Can vulnerable and secured implementations be compared under identical
+   ordered inputs?
+10. Can settlement divergence be reproduced and measured deterministically?
 
 ---
 
@@ -85,26 +127,67 @@ The project must identify:
 * evidence weakening the thesis;
 * conditions under which the thesis may be false;
 * behaviors that remain unresolved;
-* limitations of every experiment.
+* limitations of every experiment;
+* assumptions required for every conclusion.
 
 ---
 
-## 4. Initial Standard Scope
+## 4. Why This Problem Matters
 
-### 4.1 ERC-20
+Asset integrations often operate across several independently implemented
+layers:
+
+```text
+Smart Contract
+        ↓
+Blockchain Execution Environment
+        ↓
+RPC or Indexing Layer
+        ↓
+Wallet, Exchange, or Custodian Adapter
+        ↓
+Internal Ledger
+        ↓
+Reconciliation and Settlement Process
+```
+
+A successful transaction at one layer does not automatically prove economic
+success at every other layer.
+
+Examples include:
+
+* a token function returns `false` without reverting;
+* a token returns no value despite an expected Boolean interface;
+* an event reports an amount that differs from the realized balance change;
+* a fee-on-transfer token credits less than the requested amount;
+* an integration assumes the wrong decimal scale;
+* a bridge message is processed more than once;
+* a custody ledger credits value before final settlement;
+* remote minted supply exceeds the amount locked on the canonical chain.
+
+SPECTRA models these failures as state, transition, evidence, and
+reconciliation problems rather than treating them as isolated API issues.
+
+---
+
+## 5. Initial Standard Scope
+
+The initial comparative scope covers:
+
+### 5.1 ERC-20
 
 ERC-20 provides the initial reference family for fungible-token interfaces,
 balances, transfers, approvals, allowances, and events within the Ethereum
 ecosystem.
 
-SPECTRA will not assume that every deployed ERC-20-like contract follows
+SPECTRA does not assume that every deployed ERC-20-like contract follows
 identical return, failure, fee, event, supply, or privilege behavior.
 
-### 4.2 TRC-20
+### 5.2 TRC-20
 
 TRC-20 exposes an ERC-20-like asset interface in the TRON ecosystem.
 
-SPECTRA will evaluate interface similarity separately from:
+SPECTRA evaluates interface similarity separately from:
 
 * TVM execution assumptions;
 * resource behavior;
@@ -112,11 +195,12 @@ SPECTRA will evaluate interface similarity separately from:
 * event interpretation;
 * wallet and exchange integration behavior.
 
-### 4.3 BEP-20
+### 5.3 BEP-20
 
-BEP-20 is derived from the ERC-20 interface family for BNB Smart Chain.
+BEP-20 belongs to the ERC-20-compatible interface family used on BNB Smart
+Chain.
 
-SPECTRA will separately evaluate:
+SPECTRA separately evaluates:
 
 * metadata requirements;
 * EVM-level compatibility;
@@ -124,19 +208,19 @@ SPECTRA will separately evaluate:
 * cross-chain supply interpretation;
 * confirmation and finality assumptions.
 
-### 4.4 ARC-200
+### 5.4 ARC-200
 
 ARC-200 defines a smart-contract token interface for Algorand.
 
-Although it is conceptually influenced by ERC-20, it operates under a
-different application, ABI, state, and execution environment.
+Although conceptually influenced by ERC-20, it operates under a different
+application, ABI, state, and execution environment.
 
-SPECTRA will not treat conceptual similarity as binary or adapter-level
+SPECTRA does not treat conceptual similarity as binary or adapter-level
 compatibility.
 
 ---
 
-## 5. SASP-1
+## 6. SASP-1
 
 ### Secure Asset Semantics Profile — Experimental Draft
 
@@ -170,24 +254,24 @@ SASP-1 is not:
 
 ---
 
-## 6. Frozen MVP
+## 7. Frozen MVP
 
 The initial SPECTRA MVP is intentionally constrained.
 
-It will contain:
+It is designed to contain:
 
-1. Four source-backed asset-standard manifests.
-2. One experimental SASP-1 manifest.
-3. One deterministic TypeScript state-transition model.
-4. One minimal ERC-20-compatible reference implementation.
-5. Deliberately non-compliant and secured contract variants.
-6. Four adversarial scenario families.
-7. Eight explicitly defined security invariants.
-8. Vulnerable-versus-secured execution comparisons.
-9. Deterministic trace records.
-10. Evidence-driven technical visualizations.
+1. four source-backed asset-standard manifests;
+2. one experimental SASP-1 manifest;
+3. one deterministic TypeScript state-transition model;
+4. one minimal ERC-20-compatible reference implementation;
+5. deliberately non-compliant and secured contract variants;
+6. four adversarial scenario families;
+7. eight explicitly defined security invariants;
+8. vulnerable-versus-secured execution comparisons;
+9. deterministic trace records;
+10. evidence-driven technical visualizations.
 
-### Initial Adversarial Scenarios
+### Initial Adversarial Scenario Families
 
 * allowance state race;
 * non-standard transfer semantics;
@@ -199,19 +283,276 @@ It will contain:
 The initial MVP does not include:
 
 * production mainnet deployment;
+* production custody infrastructure;
 * a production bridge;
 * a complete ARC-200 implementation;
-* comprehensive coverage of all token standards;
+* comprehensive coverage of all asset standards;
 * complete consensus modeling;
 * validator-economic analysis;
 * production key-management infrastructure;
-* full formal verification;
+* complete formal verification;
 * proof of vulnerability absence;
 * trading or investment functionality.
 
 ---
 
-## 7. System Architecture
+## 8. Current Executable Foundation
+
+SPECTRA now contains its first executable TypeScript foundation.
+
+### 8.1 Runtime and Compiler Baseline
+
+The executable workspace currently uses:
+
+```text
+Node.js:        >=24 <25
+TypeScript:     7.0.2
+Module system:  ECMAScript Modules
+Resolution:     NodeNext
+Test runner:    node:test
+Package manager: npm
+```
+
+The repository includes:
+
+* an explicit Node.js runtime family;
+* exact direct-dependency versions;
+* a committed dependency lockfile;
+* strict TypeScript compiler checks;
+* deterministic build and test commands;
+* cross-platform editor and line-ending rules;
+* generated-output exclusions.
+
+### 8.2 Strict TypeScript Policy
+
+The current compiler configuration enables:
+
+```text
+strict
+noUncheckedIndexedAccess
+exactOptionalPropertyTypes
+noImplicitOverride
+noFallthroughCasesInSwitch
+noImplicitReturns
+noPropertyAccessFromIndexSignature
+useUnknownInCatchVariables
+verbatimModuleSyntax
+isolatedModules
+forceConsistentCasingInFileNames
+noEmitOnError
+```
+
+These checks reduce avoidable ambiguity at the executable model boundary.
+
+They do not replace runtime validation, testing, threat modeling, or formal
+reasoning.
+
+---
+
+## 9. Amount Domain Primitive
+
+The first executable financial-domain primitive is:
+
+```text
+model/amount.ts
+```
+
+`Amount` represents a non-negative integer quantity expressed in base units.
+
+Its mathematical domain is:
+
+$$
+\mathbb{A} = {x \in \mathbb{Z} \mid x \geq 0}
+$$
+
+Therefore:
+
+```text
+0     is a valid Amount
+1     is a valid Amount
+1000  is a valid Amount
+-1    is not a valid Amount
+1.5   is not a valid Amount
+```
+
+### 9.1 Why Integer Base Units
+
+Core asset accounting must not depend on binary floating-point approximation.
+
+Instead of storing:
+
+```text
+1.25 tokens
+```
+
+the model stores an exact integer number of base units.
+
+For an asset with six decimal places:
+
+$$
+1.25 \times 10^6 = 1{,}250{,}000
+$$
+
+The model therefore stores:
+
+```text
+1,250,000 base units
+```
+
+Human-readable formatting is treated as a separate representation concern.
+
+### 9.2 Why `bigint`
+
+JavaScript `number` cannot exactly represent every integer required for
+high-precision asset accounting.
+
+SPECTRA therefore uses `bigint` for the shared amount domain.
+
+`bigint` solves exact integer representation within the modeled domain.
+
+It does not independently solve:
+
+* decimal parsing;
+* scale interpretation;
+* rounding policy;
+* protocol-specific numeric limits;
+* JSON serialization;
+* asset identity;
+* currency or unit mismatches.
+
+### 9.3 Why a Branded Type
+
+A plain alias such as:
+
+```typescript
+type Amount = bigint;
+```
+
+would not distinguish a validated amount from an arbitrary raw integer.
+
+SPECTRA uses a branded type so that the compiler can distinguish:
+
+```text
+unvalidated bigint
+```
+
+from:
+
+```text
+validated Amount
+```
+
+Runtime validation remains necessary because TypeScript types are not runtime
+security boundaries.
+
+### 9.4 Construction Rules
+
+The current constructor accepts:
+
+* zero;
+* positive `bigint` values;
+* arbitrarily large non-negative integers within the shared model.
+
+It rejects:
+
+* JavaScript `number`;
+* string representations;
+* `null`;
+* other non-`bigint` values;
+* negative `bigint` values.
+
+### 9.5 Arithmetic Operations
+
+Addition is closed over the amount domain:
+
+$$
+a,b \in \mathbb{A}
+\Rightarrow
+a+b \in \mathbb{A}
+$$
+
+The implementation exposes exact integer addition:
+
+```text
+addAmounts(a, b)
+```
+
+Subtraction requires the precondition:
+
+$$
+b \leq a
+$$
+
+so that:
+
+$$
+a-b \in \mathbb{A}
+$$
+
+The implementation rejects subtraction that would produce a negative result.
+
+### 9.6 Numeric Scope Boundary
+
+The shared `Amount` domain currently has no protocol-specific upper bound.
+
+This is intentional.
+
+Constraints such as:
+
+```text
+EVM uint256 maximum
+protocol-specific supply cap
+database integer width
+exchange ledger limit
+```
+
+will be modeled through narrower types or explicit policy layers rather than
+being silently imposed on the cross-standard base domain.
+
+---
+
+## 10. Current Test Coverage
+
+The initial amount test suite is located at:
+
+```text
+test/amount.test.ts
+```
+
+It currently verifies:
+
+1. zero and positive `bigint` construction;
+2. large integer construction;
+3. rejection of non-`bigint` runtime inputs;
+4. rejection of negative values;
+5. runtime amount-predicate behavior;
+6. canonical zero representation;
+7. exact integer addition;
+8. valid subtraction and domain-underflow rejection.
+
+The current tests provide evidence for the explicitly tested behaviors only.
+
+They do not prove:
+
+* complete correctness;
+* security of the wider system;
+* correctness of future state transitions;
+* absence of all numeric edge cases;
+* protocol conformance;
+* settlement equivalence.
+
+Future testing layers will include:
+
+* property-oriented tests;
+* algebraic-law tests;
+* fuzz tests;
+* stateful invariant tests;
+* deterministic replay tests;
+* adversarial integration scenarios.
+
+---
+
+## 11. System Architecture
 
 ```mermaid
 flowchart LR
@@ -219,7 +560,7 @@ flowchart LR
     B --> C[Standard JSON Manifests]
     C --> D[SASP-1 Experimental Profile]
 
-    D --> E[Deterministic State Model]
+    D --> E[Deterministic TypeScript Model]
     D --> F[Reference and Adversarial Contracts]
 
     E --> G[Scenario Runner]
@@ -239,34 +580,14 @@ flowchart LR
 
 ### Architecture Principle
 
-No visualization, finding, or compatibility claim should exist independently
-from its underlying evidence.
-
-The intended evidence path is:
-
-```text
-Official Requirement
-        ↓
-Normalized Requirement
-        ↓
-State Transition or Contract Behavior
-        ↓
-Executable Test or Scenario
-        ↓
-Deterministic Trace
-        ↓
-Invariant or Conformance Result
-        ↓
-Evidence Record
-        ↓
-Human-Readable Visualization
-```
+No visualization, compatibility statement, finding, or security claim should
+exist independently from its underlying evidence.
 
 ---
 
-## 8. State-Transition Foundation
+## 12. State-Transition Foundation
 
-The initial global research state is divided into five connected domains:
+The global research state is currently divided into five connected domains:
 
 ```text
 Global State
@@ -277,13 +598,12 @@ Global State
 └── Observation and Evidence State
 ```
 
-The working mathematical specification is documented in:
+The mathematical working specification is documented in:
 
-```text
-docs/state-model.md
-```
+* [State Model](docs/state-model.md)
+* [Documentation Index](docs/README.md)
 
-The model currently defines:
+The specification defines:
 
 * the global state boundary;
 * integer base-unit accounting;
@@ -305,14 +625,192 @@ The document is currently classified as:
 Working Specification v0.1.1
 ```
 
-It is complete enough to guide the first executable TypeScript model but
-remains subject to test-driven revision.
+The specification is sufficient to guide executable development but remains
+subject to test-driven and evidence-driven revision.
 
 ---
 
-## 9. Planned Security Invariants
+## 13. Repository Structure
 
-The initial SPECTRA invariant program includes:
+Current tracked structure:
+
+```text
+spectra-asset-protocol-lab/
+├── docs/
+│   ├── README.md
+│   └── state-model.md
+├── model/
+│   └── amount.ts
+├── standards/
+│   └── README.md
+├── test/
+│   └── amount.test.ts
+├── .editorconfig
+├── .gitignore
+├── .npmrc
+├── .nvmrc
+├── package-lock.json
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+### Current Responsibilities
+
+```text
+docs/       research documentation and mathematical specifications
+model/      deterministic TypeScript domain and state model
+standards/  machine-readable standard-manifest workspace
+test/       executable unit, boundary, invariant, and replay tests
+```
+
+### Planned Directories
+
+Directories are introduced only when they contain substantive and reviewable
+artifacts.
+
+```text
+contracts/
+traces/
+scripts/
+frontend/
+```
+
+Planned responsibilities:
+
+```text
+contracts/  reference, vulnerable, and secured Solidity implementations
+traces/     generated deterministic execution evidence
+scripts/    validation, replay, and evidence-generation tooling
+frontend/   trace-driven visual observatory
+```
+
+---
+
+## 14. Getting Started
+
+### 14.1 Supported Development Environments
+
+Primary environment:
+
+```text
+macOS on Apple Silicon
+```
+
+Secondary environment:
+
+```text
+Windows with WSL2 Ubuntu
+```
+
+Native Windows PowerShell is not currently the primary executable-model
+environment.
+
+### 14.2 Prerequisites
+
+* Git;
+* Node Version Manager;
+* Node.js 24;
+* npm;
+* VS Code or another TypeScript-capable editor.
+
+### 14.3 Clone and Enter the Repository
+
+```bash
+git clone <repository-location>
+cd spectra-asset-protocol-lab
+```
+
+### 14.4 Select the Runtime
+
+```bash
+nvm use
+```
+
+The repository-level `.nvmrc` selects Node.js 24.
+
+### 14.5 Install Exact Dependencies
+
+```bash
+npm ci
+```
+
+`npm ci` installs the dependency graph recorded in `package-lock.json`.
+
+### 14.6 Run the Complete Validation Boundary
+
+```bash
+npm run check
+```
+
+This runs:
+
+```text
+TypeScript type checking
+        ↓
+clean build
+        ↓
+JavaScript emission
+        ↓
+Node.js test execution
+```
+
+---
+
+## 15. Available Commands
+
+### Type Check
+
+```bash
+npm run typecheck
+```
+
+Checks TypeScript source files without producing build output.
+
+### Build
+
+```bash
+npm run build
+```
+
+Removes previous generated output and compiles the project into:
+
+```text
+dist/
+```
+
+### Test
+
+```bash
+npm test
+```
+
+Builds the project and runs emitted JavaScript tests through the Node.js test
+runner.
+
+### Complete Check
+
+```bash
+npm run check
+```
+
+Runs both type checking and executable tests.
+
+### Clean
+
+```bash
+npm run clean
+```
+
+Removes generated build output.
+
+Generated files are not committed to the repository.
+
+---
+
+## 16. Planned Security Invariants
+
+The initial invariant program includes:
 
 ### INV-01 — Supply Conservation
 
@@ -321,17 +819,17 @@ transitions.
 
 ### INV-02 — Balance Conservation
 
-Ordinary transfers must preserve modeled aggregate balances when no fee,
-mint, burn, or rebase behavior is enabled.
+Ordinary transfers must preserve modeled aggregate balances when no fee, mint,
+burn, or rebase behavior is enabled.
 
 ### INV-03 — Authorization Integrity
 
-An actor must not modify balances, allowances, supply, or control state
-without the required authority.
+An actor must not modify balances, allowances, supply, or control state without
+the required authority.
 
 ### INV-04 — Allowance Safety
 
-Delegated spending must not exceed the valid allowance or preserve stale
+Delegated spending must not exceed valid authorization or preserve stale
 authorization unexpectedly.
 
 ### INV-05 — Event–State Consistency
@@ -355,7 +853,7 @@ policy.
 The same model version, initial state, explicit environment, and ordered input
 sequence must reproduce the same final-state hash.
 
-Each accepted invariant will eventually include:
+Each implemented invariant must eventually include:
 
 * a natural-language definition;
 * a mathematical definition;
@@ -369,11 +867,9 @@ Each accepted invariant will eventually include:
 
 ---
 
-## 10. Evidence Policy
+## 17. Evidence Policy
 
-SPECTRA follows an evidence-first policy.
-
-A material claim should be classified as one of the following:
+SPECTRA classifies material claims using the following evidence classes.
 
 ### SPECIFIED
 
@@ -397,20 +893,22 @@ under a defined environment.
 
 ### PROJECT-DEFINED
 
-The behavior, invariant, or profile belongs to the SPECTRA research model
-rather than an external official standard.
+The behavior, invariant, model, or profile belongs to SPECTRA rather than an
+external official standard.
 
 No claim should silently move from one evidence class to another.
 
 ---
 
-## 11. Security-Claim Policy
+## 18. Security-Claim Policy
 
 SPECTRA does not treat any single tool output as proof of security.
 
 The following may provide supporting evidence:
 
 * unit tests;
+* boundary tests;
+* property tests;
 * invariant tests;
 * fuzz tests;
 * stateful tests;
@@ -452,101 +950,40 @@ All conclusions must remain bounded by:
 * tested behavior;
 * selected environment;
 * source coverage;
+* numeric policy;
 * known limitations.
 
 ---
 
-## 12. Repository Structure
-
-Current repository structure:
-
-```text
-spectra-asset-protocol-lab/
-├── docs/
-│   ├── README.md
-│   └── state-model.md
-├── standards/
-│   └── README.md
-└── README.md
-```
-
-### Current Files
-
-#### `README.md`
-
-Defines the project identity, research question, frozen scope, architecture,
-evidence policy, current status, and development direction.
-
-#### `docs/README.md`
-
-Provides the documentation index, document-status model, and documentation
-evidence rules.
-
-#### `docs/state-model.md`
-
-Defines the first state-transition working specification and foundational
-invariants.
-
-#### `standards/README.md`
-
-Defines the intended role and content categories of machine-readable standard
-manifests.
-
-### Planned Directories
-
-Directories will be introduced only when they contain substantive,
-reviewable, and reproducible project artifacts.
-
-```text
-model/
-contracts/
-test/
-traces/
-scripts/
-frontend/
-```
-
-The current intended responsibilities are:
-
-```text
-model/      deterministic TypeScript state-transition engine
-contracts/  Solidity reference, vulnerable, and secured implementations
-test/       executable unit, invariant, adversarial, and replay tests
-traces/     generated deterministic execution evidence
-scripts/    validation, replay, and evidence-generation tooling
-frontend/   trace-driven visual observatory
-```
-
----
-
-## 13. Research and Engineering Principles
+## 19. Research and Engineering Principles
 
 1. Official and primary sources take precedence over secondary summaries.
 2. Interface similarity must not be treated as behavioral equivalence.
-3. Every important transition must define preconditions and postconditions.
-4. Every transition must identify fields that may and must not change.
-5. Amounts must be modeled in integer base units.
-6. Floating-point arithmetic must not be used for core token accounting.
-7. Failure behavior must be modeled explicitly.
-8. Events must not be treated as independent proof of state.
-9. Transaction success must not be treated as proof of economic success.
-10. On-chain state and off-chain ledger state must be reconciled separately.
-11. Vulnerable and secured models must receive equivalent ordered inputs.
-12. Deterministic replay must be versioned and reproducible.
-13. Unsupported claims and limitations must remain visible.
-14. TODO-only documents must not be committed to the primary project history.
-15. Every commit should represent one independently reviewable logical unit.
+3. Financial quantities must carry explicit domain meaning.
+4. Core asset accounting must use integer base units.
+5. Floating-point arithmetic must not be used for core token accounting.
+6. Every important transition must define preconditions and postconditions.
+7. Every transition must identify fields that may and must not change.
+8. Failure behavior must be modeled explicitly.
+9. Events must not be treated as independent proof of state.
+10. Transaction success must not be treated as proof of economic success.
+11. On-chain state and off-chain ledger state must be reconciled separately.
+12. Vulnerable and secured models must receive equivalent ordered inputs.
+13. Deterministic replay must be versioned and reproducible.
+14. Unsupported claims and limitations must remain visible.
+15. TODO-only documents must not be committed as completed research artifacts.
+16. Every commit must represent one independently reviewable logical unit.
+17. Every material branch must pass through Pull Request review before
+    integration.
 
 ---
 
-## 14. Development Workflow
+## 20. Development Workflow
 
 SPECTRA uses a review-oriented Git workflow.
 
-A normal technical unit follows this process:
-
 ```text
-Inspect current repository state
+Update local main
         ↓
 Create a focused branch
         ↓
@@ -554,17 +991,29 @@ Implement one logical unit
         ↓
 Run local validation
         ↓
-Inspect unstaged diff
+Inspect the working tree
+        ↓
+Inspect the unstaged diff
         ↓
 Stage explicit files
         ↓
-Inspect staged diff
+Inspect the staged diff
         ↓
-Commit with a precise subject and rationale
+Create an atomic commit
         ↓
 Push the branch
         ↓
-Review before integration
+Open or update a Draft Pull Request
+        ↓
+Review files, commits, tests, and claims
+        ↓
+Mark ready for review
+        ↓
+Select an explicit merge strategy
+        ↓
+Integrate into main
+        ↓
+Update local main and remove obsolete branches
 ```
 
 Example branch categories:
@@ -583,7 +1032,8 @@ Example commit subjects:
 
 ```text
 docs(model): define deterministic asset state transitions
-fix(docs): repair mathematical rendering
+chore(model): establish strict TypeScript runtime
+model(amount): define integer base-unit amounts
 model(state): add immutable token state representation
 model(transition): implement ordinary transfer semantics
 test(invariants): verify balance conservation
@@ -595,137 +1045,107 @@ Commit messages should explain:
 * what changed;
 * why it changed;
 * which assumptions were introduced;
+* which claims are supported;
 * which claims remain unsupported.
 
 ---
 
-## 15. Reproducibility Status
-
-The repository currently contains:
-
-* the initial project definition;
-* the documentation index;
-* a working state-transition specification;
-* the machine-readable manifest workspace definition.
-
-The repository does not yet contain executable build or test components.
-
-The following commands will be documented only after their corresponding
-components exist:
-
-```text
-build
-typecheck
-unit test
-invariant test
-scenario execution
-trace replay
-evidence validation
-visualization generation
-```
-
-Current specification-level validation includes:
-
-```bash
-git diff --check
-grep -RIn "TODO\|TBD\|FIXME" README.md docs standards
-```
-
-The absence of executable components is an explicit current limitation, not a
-hidden project gap.
-
----
-
-## 16. Documentation Roadmap
-
-Current documentation:
-
-```text
-docs/README.md
-docs/state-model.md
-```
-
-Planned documentation:
-
-```text
-docs/project-charter.md
-docs/architecture.md
-docs/methodology.md
-docs/threat-model.md
-docs/invariants.md
-docs/findings.md
-docs/limitations.md
-docs/evidence-register.md
-```
-
-A planned document will be added only when its first version contains
-substantive and reviewable material.
-
----
-
-## 17. Near-Term Engineering Roadmap
+## 21. Near-Term Engineering Roadmap
 
 ### Phase 1 — Executable State Core
 
-* TypeScript project baseline;
-* strict compiler configuration;
-* immutable state types;
-* operation discriminated union;
-* success/failure result union;
-* pure transition function;
-* executable foundational invariants;
-* deterministic trace schema.
+Current and planned work:
+
+* [x] Node.js and TypeScript project baseline;
+* [x] strict compiler configuration;
+* [x] non-negative integer Amount primitive;
+* [x] initial Amount unit and boundary tests;
+* [ ] canonical base-unit parsing;
+* [ ] deterministic Amount serialization;
+* [ ] account identity type;
+* [ ] immutable token state;
+* [ ] operation discriminated union;
+* [ ] success/failure result union;
+* [ ] pure transition function;
+* [ ] executable foundational invariants;
+* [ ] deterministic trace schema.
 
 ### Phase 2 — Standard Manifests
 
-* ERC-20 manifest;
-* TRC-20 manifest;
-* BEP-20 manifest;
-* ARC-200 manifest;
-* SASP-1 experimental profile;
-* manifest schema validation.
+* [ ] ERC-20 manifest;
+* [ ] TRC-20 manifest;
+* [ ] BEP-20 manifest;
+* [ ] ARC-200 manifest;
+* [ ] SASP-1 experimental profile;
+* [ ] manifest schema validation.
 
 ### Phase 3 — Adversarial Semantics
 
-* false-return behavior;
-* empty-return behavior;
-* revert behavior;
-* fee-on-transfer behavior;
-* missing or inconsistent events;
-* allowance race scenarios;
-* precision normalization failures.
+* [ ] false-return behavior;
+* [ ] empty-return behavior;
+* [ ] revert behavior;
+* [ ] fee-on-transfer behavior;
+* [ ] missing or inconsistent events;
+* [ ] allowance-race scenarios;
+* [ ] precision-normalization failures.
 
 ### Phase 4 — Solidity Evidence Layer
 
-* minimal reference implementation;
-* deliberately non-compliant variants;
-* secured variants;
-* Foundry unit tests;
-* fuzz tests;
-* invariant tests;
-* execution-trace export.
+* [ ] minimal reference implementation;
+* [ ] deliberately non-compliant variants;
+* [ ] secured variants;
+* [ ] Foundry unit tests;
+* [ ] fuzz tests;
+* [ ] invariant tests;
+* [ ] execution-trace export.
 
 ### Phase 5 — Settlement and Cross-Chain Model
 
-* custody-ledger reconciliation;
-* pending and finalized deposit states;
-* replay protection;
-* lock/mint/burn/release accounting;
-* canonical and remote supply comparison;
-* settlement divergence measurement.
+* [ ] custody-ledger reconciliation;
+* [ ] pending and finalized deposit states;
+* [ ] replay protection;
+* [ ] lock/mint/burn/release accounting;
+* [ ] canonical and remote supply comparison;
+* [ ] settlement-divergence measurement.
 
 ### Phase 6 — Visual Observatory
 
-* standard comparison matrix;
-* state-transition explorer;
-* invariant status views;
-* vulnerable-versus-secured comparisons;
-* settlement-divergence charts;
-* deterministic trace inspection.
+* [ ] standard comparison matrix;
+* [ ] state-transition explorer;
+* [ ] invariant-status views;
+* [ ] vulnerable-versus-secured comparisons;
+* [ ] settlement-divergence charts;
+* [ ] deterministic trace inspection.
 
 ---
 
-## 18. Explicit Non-Goals
+## 22. Current Project Status
+
+| Component                          | Status                       |
+| ---------------------------------- | ---------------------------- |
+| Research charter                   | Defined                      |
+| Working state specification        | Implemented as documentation |
+| Node.js/TypeScript workspace       | Implemented                  |
+| Strict compiler baseline           | Implemented                  |
+| Deterministic dependency lock      | Implemented                  |
+| Integer base-unit `Amount`         | Implemented                  |
+| Amount unit and boundary tests     | Implemented                  |
+| Canonical decimal parsing          | Not yet implemented          |
+| Deterministic BigInt serialization | Not yet implemented          |
+| Account identity model             | Not yet implemented          |
+| Token state model                  | Not yet implemented          |
+| Transfer operations                | Not yet implemented          |
+| Executable invariants              | Not yet implemented          |
+| Standard manifests                 | Not yet implemented          |
+| Solidity implementations           | Not yet implemented          |
+| Deterministic traces               | Not yet generated            |
+| Visual observatory                 | Not yet implemented          |
+| Production readiness               | Not claimed                  |
+| Formal verification                | Not claimed                  |
+
+---
+
+## 23. Explicit Non-Goals
 
 SPECTRA does not claim to:
 
@@ -745,27 +1165,30 @@ bounded, reproducible, and reviewable technical evidence.
 
 ---
 
-## 19. Current Project Status
+## 24. Documentation
+
+Current documentation:
+
+* [Documentation Index](docs/README.md)
+* [State-Transition Working Specification](docs/state-model.md)
+* [Standard Manifest Workspace](standards/README.md)
+
+Planned documentation will be introduced only when substantive material exists:
 
 ```text
-Phase: Research foundation
-Specification: Working Specification v0.1.1
-Executable TypeScript model: Not yet implemented
-Solidity implementation: Not yet implemented
-Automated tests: Not yet implemented
-Deterministic traces: Not yet generated
-Visual observatory: Not yet implemented
-Production readiness: Not claimed
-Formal verification: Not claimed
+docs/project-charter.md
+docs/architecture.md
+docs/methodology.md
+docs/threat-model.md
+docs/invariants.md
+docs/findings.md
+docs/limitations.md
+docs/evidence-register.md
 ```
-
-The next engineering milestone is to translate the state-transition
-specification into a pure and deterministic TypeScript model using integer
-base-unit accounting.
 
 ---
 
-## 20. Author
+## 25. Author
 
 **Valerius VARDA**
 
