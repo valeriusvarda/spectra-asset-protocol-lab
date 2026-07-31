@@ -351,19 +351,54 @@ reasoning.
 
 ## 9. Amount Domain Primitive
 
-The first executable financial-domain primitive is:
+The first executable financial-domain primitive is located at:
 
 ```text
 model/amount.ts
 ```
 
-`Amount` represents a non-negative integer quantity expressed in base units.
+`Amount` represents a non-negative integer quantity expressed in integer base
+units.
 
 Its mathematical domain is:
 
-$$
-\mathbb{A} = {x \in \mathbb{Z} \mid x \geq 0}
-$$
+```math
+\mathbb{A} = \left\{ x \in \mathbb{Z} \mid x \geq 0 \right\}
+```
+
+Where:
+
+* $\mathbb{A}$ represents the SPECTRA Amount domain;
+* $\mathbb{Z}$ represents the set of all integers;
+* $x \geq 0$ restricts valid values to zero and positive integers;
+* negative integers are excluded from the Amount domain;
+* fractional values are excluded because core amounts are represented in
+  integer base units.
+
+The Amount domain is a proper subset of the integer domain:
+
+```math
+\mathbb{A} \subsetneq \mathbb{Z}
+```
+
+This relationship is strict because negative integers belong to
+$\mathbb{Z}$ but do not belong to $\mathbb{A}$.
+
+Every valid `Amount` is an integer, but not every integer is a valid `Amount`.
+
+For example:
+
+```math
+0 \in \mathbb{A}
+```
+
+```math
+5 \in \mathbb{A}
+```
+
+```math
+-5 \notin \mathbb{A}
+```
 
 Therefore:
 
@@ -379,7 +414,7 @@ Therefore:
 
 Core asset accounting must not depend on binary floating-point approximation.
 
-Instead of storing:
+Instead of storing a human-readable decimal value such as:
 
 ```text
 1.25 tokens
@@ -389,9 +424,9 @@ the model stores an exact integer number of base units.
 
 For an asset with six decimal places:
 
-$$
+```math
 1.25 \times 10^6 = 1{,}250{,}000
-$$
+```
 
 The model therefore stores:
 
@@ -399,7 +434,53 @@ The model therefore stores:
 1,250,000 base units
 ```
 
-Human-readable formatting is treated as a separate representation concern.
+The relationship between a human-readable amount and its base-unit
+representation is:
+
+```math
+\text{BaseUnits}
+=
+\text{HumanAmount}
+\times
+10^{\text{Decimals}}
+```
+
+An exact conversion requires:
+
+```math
+\text{HumanAmount}
+\times
+10^{\text{Decimals}}
+\in
+\mathbb{Z}
+```
+
+When this condition is not satisfied, the human-readable value cannot be
+represented exactly under the selected decimal scale without an explicit
+rounding, truncation, or rejection policy.
+
+The reverse relationship is:
+
+```math
+\text{HumanAmount}
+=
+\frac{\text{BaseUnits}}{10^{\text{Decimals}}}
+```
+
+These equations describe the intended numeric relationship only.
+
+The initial `Amount` primitive does not select or implement a rounding policy.
+
+The initial `Amount` primitive does not yet implement:
+
+* decimal-string parsing;
+* token-decimal metadata;
+* scale validation;
+* rounding policy;
+* human-readable formatting.
+
+Those concerns will be introduced through separate and explicitly tested
+numeric-policy layers.
 
 ### 9.2 Why `bigint`
 
@@ -408,7 +489,8 @@ high-precision asset accounting.
 
 SPECTRA therefore uses `bigint` for the shared amount domain.
 
-`bigint` solves exact integer representation within the modeled domain.
+`bigint` provides exact integer arithmetic for modeled values, subject to
+available runtime resources.
 
 It does not independently solve:
 
@@ -442,8 +524,10 @@ from:
 validated Amount
 ```
 
-Runtime validation remains necessary because TypeScript types are not runtime
-security boundaries.
+The brand provides a compile-time distinction.
+
+Runtime validation remains necessary because TypeScript types are erased during
+JavaScript emission and do not constitute runtime security boundaries.
 
 ### 9.4 Construction Rules
 
@@ -451,7 +535,7 @@ The current constructor accepts:
 
 * zero;
 * positive `bigint` values;
-* arbitrarily large non-negative integers within the shared model.
+* non-negative `bigint` values within available runtime resources.
 
 It rejects:
 
@@ -461,15 +545,31 @@ It rejects:
 * other non-`bigint` values;
 * negative `bigint` values.
 
+A wrong runtime representation produces a `TypeError`.
+
+A negative `bigint` value produces a `RangeError`.
+
+This distinction separates:
+
+```text
+incorrect representation
+```
+
+from:
+
+```text
+correct representation but invalid domain value
+```
+
 ### 9.5 Arithmetic Operations
 
-Addition is closed over the amount domain:
+Addition is closed over the Amount domain:
 
-$$
+```math
 a,b \in \mathbb{A}
 \Rightarrow
 a+b \in \mathbb{A}
-$$
+```
 
 The implementation exposes exact integer addition:
 
@@ -477,19 +577,31 @@ The implementation exposes exact integer addition:
 addAmounts(a, b)
 ```
 
-Subtraction requires the precondition:
+Zero is the additive identity:
 
-$$
+```math
+a + 0 = a
+```
+
+Subtraction is not unconditionally closed over the Amount domain.
+
+It requires the precondition:
+
+```math
 b \leq a
-$$
+```
 
-so that:
+Under this precondition:
 
-$$
+```math
 a-b \in \mathbb{A}
-$$
+```
 
-The implementation rejects subtraction that would produce a negative result.
+If $b > a$, the result would be negative and therefore outside the modeled
+Amount domain.
+
+The implementation rejects such subtraction instead of returning an invalid
+Amount.
 
 ### 9.6 Numeric Scope Boundary
 
@@ -504,12 +616,31 @@ EVM uint256 maximum
 protocol-specific supply cap
 database integer width
 exchange ledger limit
+custody-system accounting limit
 ```
 
 will be modeled through narrower types or explicit policy layers rather than
 being silently imposed on the cross-standard base domain.
 
+The current Amount implementation therefore establishes only the following
+claim:
+
+```math
+x \in \mathbb{Z}
+\land
+x \geq 0
+```
+
+It does not establish:
+
+* protocol-specific representability;
+* database-storage compatibility;
+* serialization compatibility;
+* asset-decimal correctness;
+* production accounting suitability.
+
 ---
+
 
 ## 10. Current Test Coverage
 
