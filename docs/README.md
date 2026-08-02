@@ -3,11 +3,13 @@
 This directory contains the human-readable research specifications, security
 models, evidence rules, findings, and limitations used by SPECTRA.
 
+
 ## Current Documents
 
-| Document         | Status                       | Purpose                                                                                                              |
-| ---------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `state-model.md` | Working Specification v0.1.1 | Defines state boundaries, transition semantics, reachability, reconciliation conditions, and foundational invariants |
+| Document               | Status                       | Purpose                                                                                                              |
+| ---------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `state-model.md`       | Working Specification v0.1.1 | Defines state boundaries, transition semantics, reachability, reconciliation conditions, and foundational invariants |
+| `numeric-semantics.md` | Working Specification v0.1.0 | Defines amount, scale, exact-representation, conversion-policy, asset-identity, and numeric evidence boundaries       |
 
 ## Planned Documents
 
