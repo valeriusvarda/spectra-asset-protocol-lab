@@ -6,18 +6,19 @@
 > asset-standard semantics, protocol invariants, interoperability failures,
 > and financial-settlement risks across blockchain ecosystems.
 
-| Field                | Current value                                                                  |
-| -------------------- | ------------------------------------------------------------------------------ |
-| Repository           | `spectra-asset-protocol-lab`                                                   |
-| Current phase        | Executable state-core foundation                                               |
-| Project type         | Independent protocol-security and financial-infrastructure research laboratory |
-| Primary language     | English                                                                        |
-| Runtime family       | Node.js 24 LTS                                                                 |
-| TypeScript           | 7.0.2                                                                          |
-| Specification        | Working Specification v0.1.1                                                   |
-| Status               | Experimental and under active development                                      |
-| Production readiness | Not claimed                                                                    |
-| Formal verification  | Not claimed                                                                    |
+| Field                  | Current value                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| Repository             | `spectra-asset-protocol-lab`                                                   |
+| Current phase          | Quantitative numeric-semantics specification                                   |
+| Project type           | Independent protocol-security and financial-infrastructure research laboratory |
+| Primary language       | English                                                                        |
+| Runtime family         | Node.js 24 LTS                                                                 |
+| TypeScript             | 7.0.2                                                                          |
+| Executable scope       | Strict TypeScript runtime and integer base-unit `Amount` primitive             |
+| Working specifications | State Model v0.1.1 and Quantitative Numeric Semantics v0.1.0                   |
+| Status                 | Experimental and under active development                                      |
+| Production readiness   | Not claimed                                                                    |
+| Formal verification    | Not claimed                                                                    |
 
 ---
 
@@ -82,6 +83,77 @@ Evidence Record
         ↓
 Human-Readable Visualization
 ```
+
+### Current Evidence Boundary
+
+The repository currently contains three distinct maturity layers.
+
+#### Implemented and Executable
+
+```text
+strict TypeScript runtime
+integer base-unit Amount primitive
+runtime Amount validation
+canonical zero representation
+exact integer addition
+preconditioned subtraction
+eight executable Amount tests
+GitHub Actions validation workflow
+```
+
+These capabilities are supported only within their current implementation,
+runtime, test, and repository boundaries.
+
+#### Specified and Reviewable, but Not Executable
+
+```text
+Amount and DecimalScale mathematical domains
+decimal scale-factor relationship
+exact encoding and decoding relationships
+exact-representability preconditions
+exact round-trip properties
+known-versus-unknown scale distinction
+scale-source classification
+scale-mismatch error derivation
+conversion-policy taxonomy
+numeric security and financial failure modes
+future implementation and test obligations
+numeric evidence and claim boundaries
+```
+
+These behaviors and constraints are documented in the quantitative numeric
+working specification.
+
+They guide implementation but do not establish that corresponding executable
+types, parsers, conversion functions, adapters, or reconciliation mechanisms
+already exist.
+
+#### Planned or Design-Unresolved
+
+```text
+DecimalScale runtime representation
+implementation-level maximum scale
+known-versus-unknown scale runtime type
+canonical exact-decimal input grammar
+decimal parser and formatter APIs
+asset-identity representation
+conversion result and error unions
+residual and dust representation
+cross-scale reconciliation records
+protocol-adapter implementations
+```
+
+These subjects have been identified as required design work, but their complete
+executable contracts have not yet been frozen.
+
+A documented behavior must not be described as executable until an
+implementation and corresponding test evidence exist.
+
+An unresolved design question must not be described as a completed
+specification.
+
+An implemented behavior must not be generalized beyond its explicit runtime,
+model, test, protocol, and evidence boundaries.
 
 ---
 
@@ -305,11 +377,11 @@ SPECTRA now contains its first executable TypeScript foundation.
 The executable workspace currently uses:
 
 ```text
-Node.js:        >=24 <25
-TypeScript:     7.0.2
-Module system:  ECMAScript Modules
-Resolution:     NodeNext
-Test runner:    node:test
+Node.js:         >=24 <25
+TypeScript:      7.0.2
+Module system:   ECMAScript Modules
+Resolution:      NodeNext
+Test runner:     node:test
 Package manager: npm
 ```
 
@@ -363,7 +435,13 @@ units.
 Its mathematical domain is:
 
 ```math
-\mathbb{A} = \left\{ x \in \mathbb{Z} \mid x \geq 0 \right\}
+\mathbb{A}
+=
+\left\{
+x \in \mathbb{Z}
+\mid
+x \geq 0
+\right\}
 ```
 
 Where:
@@ -481,6 +559,22 @@ The initial `Amount` primitive does not yet implement:
 
 Those concerns will be introduced through separate and explicitly tested
 numeric-policy layers.
+
+The current mathematical, protocol, conversion-policy, scale-source,
+asset-identity, exact-representation, and numeric-evidence boundaries are
+documented in:
+
+* [Quantitative Numeric Semantics](docs/numeric-semantics.md)
+
+The document is currently classified as:
+
+```text
+Working Specification v0.1.0
+```
+
+It guides future implementation but does not establish that `DecimalScale`,
+decimal parsing, formatting, encoding, decoding, or conversion-policy behavior
+has already been implemented.
 
 ### 9.2 Why `bigint`
 
@@ -641,7 +735,6 @@ It does not establish:
 
 ---
 
-
 ## 10. Current Test Coverage
 
 The initial amount test suite is located at:
@@ -716,7 +809,9 @@ exist independently from its underlying evidence.
 
 ---
 
-## 12. State-Transition Foundation
+## 12. Working Specifications
+
+### 12.1 State-Transition Foundation
 
 The global research state is currently divided into five connected domains:
 
@@ -759,6 +854,61 @@ Working Specification v0.1.1
 The specification is sufficient to guide executable development but remains
 subject to test-driven and evidence-driven revision.
 
+### 12.2 Quantitative Numeric Semantics
+
+The quantitative numeric working specification is documented in:
+
+* [Quantitative Numeric Semantics](docs/numeric-semantics.md)
+
+The specification separates:
+
+```text
+integer base-unit Amount
+decimal scale
+human-readable decimal interpretation
+asset identity
+scale source
+exact conversion
+rounding or rejection policy
+protocol-specific numeric representation
+```
+
+It defines:
+
+* the shared Amount and DecimalScale mathematical domains;
+* decimal scale factors;
+* exact encoding and decoding relationships;
+* exact-representability preconditions;
+* round-trip properties;
+* known-versus-unknown scale semantics;
+* asset and unit compatibility boundaries;
+* source-backed ERC-20, native-USDC, Stellar, and CCTP cases;
+* scale-mismatch error analysis;
+* explicit conversion-policy classes;
+* numeric security and financial failure modes;
+* future implementation requirements;
+* executable test obligations;
+* unresolved design questions;
+* evidence and claim boundaries.
+
+The document is currently classified as:
+
+```text
+Working Specification v0.1.0
+```
+
+The specification does not yet provide:
+
+* an executable `DecimalScale` type;
+* a decimal parser;
+* a formatter;
+* an encoding or decoding API;
+* a conversion-policy engine;
+* an asset-identity implementation;
+* production accounting guarantees;
+* protocol-conformance proof;
+* settlement-equivalence proof.
+
 ---
 
 ## 13. Repository Structure
@@ -769,6 +919,7 @@ Current tracked structure:
 spectra-asset-protocol-lab/
 ├── docs/
 │   ├── README.md
+│   ├── numeric-semantics.md
 │   └── state-model.md
 ├── model/
 │   └── amount.ts
@@ -1191,9 +1342,17 @@ Current and planned work:
 * [x] strict compiler configuration;
 * [x] non-negative integer Amount primitive;
 * [x] initial Amount unit and boundary tests;
-* [ ] canonical base-unit parsing;
+* [x] state-transition working specification;
+* [x] quantitative numeric-semantics working specification;
+* [ ] DecimalScale domain primitive;
+* [ ] explicit known-versus-unknown scale runtime representation;
+* [ ] canonical exact-decimal input grammar;
+* [ ] exact decimal-string parser;
+* [ ] exact encode and decode operations;
 * [ ] deterministic Amount serialization;
-* [ ] account identity type;
+* [ ] asset-identity representation and runtime type;
+* [ ] scale-source representation;
+* [ ] explicit conversion-error taxonomy;
 * [ ] immutable token state;
 * [ ] operation discriminated union;
 * [ ] success/failure result union;
@@ -1252,27 +1411,42 @@ Current and planned work:
 
 ## 22. Current Project Status
 
-| Component                          | Status                       |
-| ---------------------------------- | ---------------------------- |
-| Research charter                   | Defined                      |
-| Working state specification        | Implemented as documentation |
-| Node.js/TypeScript workspace       | Implemented                  |
-| Strict compiler baseline           | Implemented                  |
-| Deterministic dependency lock      | Implemented                  |
-| Integer base-unit `Amount`         | Implemented                  |
-| Amount unit and boundary tests     | Implemented                  |
-| Canonical decimal parsing          | Not yet implemented          |
-| Deterministic BigInt serialization | Not yet implemented          |
-| Account identity model             | Not yet implemented          |
-| Token state model                  | Not yet implemented          |
-| Transfer operations                | Not yet implemented          |
-| Executable invariants              | Not yet implemented          |
-| Standard manifests                 | Not yet implemented          |
-| Solidity implementations           | Not yet implemented          |
-| Deterministic traces               | Not yet generated            |
-| Visual observatory                 | Not yet implemented          |
-| Production readiness               | Not claimed                  |
-| Formal verification                | Not claimed                  |
+| Component                                  | Status                                   |
+| ------------------------------------------ | ---------------------------------------- |
+| Research charter                           | Defined                                  |
+| State-transition working specification     | Published — Working Specification v0.1.1 |
+| Quantitative numeric working specification | Published — Working Specification v0.1.0 |
+| Node.js/TypeScript workspace               | Implemented                              |
+| Strict compiler baseline                   | Implemented                              |
+| Deterministic dependency lock              | Implemented                              |
+| Integer base-unit `Amount`                 | Implemented                              |
+| Amount unit and boundary tests             | Implemented                              |
+| `DecimalScale` primitive                   | Not yet implemented                      |
+| `DecimalScale` runtime representation      | Not yet frozen                           |
+| Implementation-level maximum scale         | Not yet frozen                           |
+| Known-versus-unknown scale distinction     | Specified conceptually                   |
+| Known-versus-unknown scale runtime model   | Not yet implemented                      |
+| Canonical exact-decimal grammar            | Not yet frozen                           |
+| Exact decimal-string parser                | Not yet implemented                      |
+| Decimal formatter                          | Not yet implemented                      |
+| Exact encode and decode operations         | Not yet implemented                      |
+| Scale-source classification                | Specified conceptually                   |
+| Scale-source runtime representation        | Not yet implemented                      |
+| Conversion-policy taxonomy                 | Specified conceptually                   |
+| Conversion-policy execution                | Not yet implemented                      |
+| Residual and dust representation           | Not yet frozen                           |
+| Deterministic BigInt serialization         | Not yet implemented                      |
+| Asset-identity representation              | Not yet frozen                           |
+| Asset-identity runtime model               | Not yet implemented                      |
+| Token state model                          | Not yet implemented                      |
+| Transfer operations                        | Not yet implemented                      |
+| Executable invariants                      | Not yet implemented                      |
+| Standard manifests                         | Not yet implemented                      |
+| Solidity implementations                   | Not yet implemented                      |
+| Deterministic traces                       | Not yet generated                        |
+| Visual observatory                         | Not yet implemented                      |
+| Production readiness                       | Not claimed                              |
+| Formal verification                        | Not claimed                              |
 
 ---
 
@@ -1302,6 +1476,7 @@ Current documentation:
 
 * [Documentation Index](docs/README.md)
 * [State-Transition Working Specification](docs/state-model.md)
+* [Quantitative Numeric Semantics Working Specification](docs/numeric-semantics.md)
 * [Standard Manifest Workspace](standards/README.md)
 
 Planned documentation will be introduced only when substantive material exists:
