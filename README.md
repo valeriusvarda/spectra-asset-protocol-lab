@@ -1513,4 +1513,3 @@ Research and engineering interests:
 SPECTRA is developed as an independent portfolio research project focused on
 transparent assumptions, reproducible evidence, and technically defensible
 claims.
-
