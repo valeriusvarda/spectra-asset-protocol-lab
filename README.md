@@ -24,16 +24,17 @@
 
 ## 1. Executive Summary
 
-SPECTRA is an independent research and engineering project for studying how
-fungible-asset standards behave across different blockchain ecosystems.
+SPECTRA is an independent protocol-security and financial-infrastructure
+research project for studying how fungible assets behave across heterogeneous
+blockchain, integration, custody, and settlement environments.
 
-The project investigates a central problem:
+The project is built around a specific systems problem:
 
-> Similar interfaces do not necessarily imply equivalent execution,
-> authorization, accounting, failure, event, precision, or settlement
-> behavior.
+> Interfaces that look compatible can conceal materially different execution,
+> authorization, accounting, precision, event, failure, and settlement
+> semantics.
 
-An integration may expose familiar functions such as:
+Two assets may expose operations that appear structurally similar:
 
 ```text
 transfer
@@ -43,22 +44,30 @@ balanceOf
 totalSupply
 ```
 
-while still differing materially in:
+while producing different economic or security outcomes under the same
+high-level integration assumptions.
+
+The difference may arise from:
 
 * return-value behavior;
 * failure signaling;
-* authorization rules;
-* event semantics;
-* fee and transfer realization;
-* decimal representation;
+* authorization semantics;
+* realized transfer amounts;
+* event-state consistency;
+* decimal and precision rules;
+* fee behavior;
 * supply controls;
 * privileged operations;
 * execution-environment assumptions;
-* bridge and custody accounting;
-* settlement finality.
+* bridge accounting;
+* custody-ledger policy;
+* settlement and finality assumptions.
 
-SPECTRA converts these differences into explicit, testable, and reviewable
-technical artifacts.
+SPECTRA therefore does not treat interface similarity as sufficient evidence of
+behavioral, accounting, or settlement equivalence.
+
+The project converts protocol behavior into explicit research artifacts that can
+be reviewed, executed, compared, falsified, and reproduced.
 
 The intended evidence path is:
 
@@ -83,6 +92,12 @@ Evidence Record
         ↓
 Human-Readable Visualization
 ```
+
+The long-term objective is not merely to catalogue token standards.
+
+The objective is to determine when apparently compatible asset systems cease to
+be behaviorally or economically equivalent, identify the exact boundary at
+which divergence occurs, and produce reproducible evidence explaining why.
 
 ### Current Evidence Boundary
 
@@ -157,27 +172,252 @@ model, test, protocol, and evidence boundaries.
 
 ---
 
-## 2. Primary Research Question
+## 2. Problem Statement and Primary Research Question
 
-Can the transfer, approval, authorization, supply, event, precision, and
-cross-chain behaviors of different blockchain asset standards be represented
-under a shared executable model so that semantic inconsistencies, security
-failures, and financial-settlement divergences can be detected before
-integration?
+### 2.1 The Core Problem
+
+Modern asset infrastructure frequently has to normalize heterogeneous systems
+behind common application-level abstractions.
+
+A wallet, exchange, custodian, bridge, payment system, accounting engine, or
+protocol adapter may attempt to treat multiple assets through a common
+interface.
+
+The resulting abstraction can create a dangerous assumption:
+
+> If two assets expose sufficiently similar interfaces, an integration can
+> treat their behavior as equivalent.
+
+SPECTRA treats that assumption as a research question rather than a fact.
+
+The underlying problem is that interface compatibility exists at only one layer.
+
+Economic correctness depends on additional layers:
+
+```text
+Interface Semantics
+        ↓
+Execution Semantics
+        ↓
+Authorization Semantics
+        ↓
+State-Transition Semantics
+        ↓
+Numeric Semantics
+        ↓
+Event and Observation Semantics
+        ↓
+Integration Semantics
+        ↓
+Ledger Semantics
+        ↓
+Settlement Semantics
+```
+
+A mismatch at any one of these layers may invalidate assumptions made by the
+layers above it.
+
+### 2.2 Failure Chain
+
+The research problem can be expressed as a failure chain:
+
+```text
+Interface Similarity
+        ↓
+Integration Assumption
+        ↓
+Hidden Semantic Difference
+        ↓
+Incorrect State Interpretation
+        ↓
+Accounting or Authorization Divergence
+        ↓
+Reconciliation Failure
+        ↓
+Security or Financial Loss Condition
+```
+
+For example, an integration may request a transfer of:
+
+```text
+1,000,000 base units
+```
+
+and observe a successful transaction.
+
+That observation alone does not prove:
+
+```text
+recipient balance increased by 1,000,000
+sender balance decreased by exactly 1,000,000
+the expected event represents the realized transfer
+the integration used the correct decimal scale
+the internal ledger credited the correct economic quantity
+the transaction reached the settlement state assumed by the custodian
+```
+
+SPECTRA studies the difference between:
+
+```text
+requested behavior
+observed behavior
+realized state transition
+recorded accounting effect
+settled economic effect
+```
+
+These values may coincide.
+
+They must not be assumed to coincide without evidence.
+
+### 2.3 Primary Research Question
+
+The primary research question is:
+
+> Can transfer, approval, authorization, supply, event, precision, and
+> cross-chain asset behavior be represented under a shared executable model
+> strongly enough to detect semantic inconsistencies, security failures, and
+> financial-settlement divergences before an integration relies on false
+> equivalence assumptions?
 
 This question is decomposed into the following research problems:
 
 1. Which behaviors are explicitly required by each official standard?
 2. Which behaviors are optional, implementation-specific, or unspecified?
 3. Can interface compatibility be separated from behavioral compatibility?
-4. Can protocol behavior be expressed as deterministic state transitions?
+4. Can heterogeneous asset behavior be expressed as deterministic state
+   transitions?
 5. Which invariants remain meaningful across different asset implementations?
-6. When can on-chain state and off-chain accounting diverge?
-7. Which evidence is sufficient to support a conformance claim?
-8. Which evidence is sufficient to support a security finding?
-9. Can vulnerable and secured implementations be compared under identical
-   ordered inputs?
-10. Can settlement divergence be reproduced and measured deterministically?
+6. Under which conditions can requested transfer value differ from realized
+   transfer value?
+7. Under which conditions can event observations disagree with realized state?
+8. When can decimal or unit interpretation create economic-value divergence?
+9. When can on-chain state and off-chain accounting diverge?
+10. When can bridge accounting violate canonical-versus-remote supply
+    relationships?
+11. Which evidence is sufficient to support a conformance claim?
+12. Which evidence is sufficient to support a security finding?
+13. Can vulnerable and secured implementations be compared under identical
+    ordered inputs?
+14. Can settlement divergence be reproduced and measured deterministically?
+
+### 2.4 Research Objectives
+
+SPECTRA has six initial research objectives.
+
+#### Objective 1 — Normalize Requirements Without Erasing Differences
+
+Extract source-backed requirements from heterogeneous asset standards and map
+them into a common analytical vocabulary without silently converting
+implementation-specific behavior into universal behavior.
+
+#### Objective 2 — Model Behavior as State Transitions
+
+Represent asset operations as explicit preconditions, transitions,
+postconditions, frame conditions, and failure states.
+
+The model should make it possible to ask:
+
+```text
+What state existed before the operation?
+What input was applied?
+Was the operation valid?
+What state changed?
+What state was required not to change?
+What observable evidence was emitted?
+```
+
+#### Objective 3 — Separate Interface Compatibility from Semantic Compatibility
+
+Determine whether two systems that appear compatible at the API boundary remain
+compatible when evaluated across:
+
+```text
+authorization
+failure
+state transition
+event
+numeric
+supply
+privilege
+settlement
+```
+
+semantics.
+
+#### Objective 4 — Make Divergence Reproducible
+
+Convert ambiguous integration failures into deterministic scenarios that can be
+executed repeatedly under controlled initial states and ordered inputs.
+
+#### Objective 5 — Connect Protocol State to Financial Accounting
+
+Model the relationship between protocol-level state and higher-level accounting
+claims such as:
+
+```text
+credited amount
+custody balance
+locked supply
+remote minted supply
+pending settlement
+finalized settlement
+```
+
+without claiming that the shared model reproduces every production system.
+
+#### Objective 6 — Produce Bounded Evidence
+
+Every conclusion must state:
+
+```text
+what was tested
+what was observed
+which invariant or requirement was evaluated
+which assumptions were required
+which systems were included
+which systems were excluded
+what remains unresolved
+```
+
+SPECTRA values bounded, reproducible evidence over broad security claims.
+
+### 2.5 Research Success Criteria
+
+The project is considered successful only when it can move beyond statements
+such as:
+
+```text
+these standards are similar
+```
+
+and produce claims of the form:
+
+```text
+Given initial state S,
+ordered input I,
+implementation or manifest M,
+and explicit assumptions A,
+
+the system produced transition S → S',
+
+which satisfied or violated requirement R
+and invariant V,
+
+with evidence E.
+```
+
+The strongest intended output is therefore not a compatibility label.
+
+It is a reproducible explanation of:
+
+```text
+where two systems agree
+where they diverge
+why they diverge
+which assumptions caused the divergence
+what evidence supports the conclusion
+```
 
 ---
 
@@ -191,23 +431,56 @@ SPECTRA begins with the following falsifiable thesis:
 > precision rules, execution-environment assumptions, and cross-chain
 > accounting are evaluated independently.
 
-This thesis is not treated as a predetermined conclusion.
+The thesis predicts that systems sharing a familiar asset interface can still
+produce materially different security or financial outcomes when evaluated
+under identical higher-level integration assumptions.
 
-The project must identify:
+The thesis is not treated as a predetermined conclusion.
+
+### 3.1 Supporting Evidence
+
+Evidence may strengthen the thesis when equivalent-looking interfaces produce
+different:
+
+* state transitions;
+* authorization outcomes;
+* return behavior;
+* realized transfer amounts;
+* event-state relationships;
+* precision results;
+* supply relationships;
+* reconciliation results.
+
+### 3.2 Weakening Evidence
+
+Evidence may weaken the thesis when multiple standards or implementations
+produce equivalent behavior across the tested semantic dimensions under the
+same explicit assumptions.
+
+### 3.3 Falsification Discipline
+
+The project must actively search for:
 
 * evidence supporting the thesis;
 * evidence weakening the thesis;
-* conditions under which the thesis may be false;
+* conditions under which the thesis becomes false;
+* assumptions required for equivalence;
 * behaviors that remain unresolved;
-* limitations of every experiment;
-* assumptions required for every conclusion.
+* limitations of every experiment.
+
+A result that contradicts the initial thesis is not a project failure.
+
+An experiment that cannot distinguish a claim from its alternative is an
+evidence-design failure and must be redesigned or reported as inconclusive.
 
 ---
 
 ## 4. Why This Problem Matters
 
-Asset integrations often operate across several independently implemented
-layers:
+Asset infrastructure spans independently implemented technical and accounting
+layers.
+
+A simplified path may look like:
 
 ```text
 Smart Contract
@@ -216,29 +489,198 @@ Blockchain Execution Environment
         ↓
 RPC or Indexing Layer
         ↓
-Wallet, Exchange, or Custodian Adapter
+Wallet, Exchange, Bridge, or Custodian Adapter
         ↓
 Internal Ledger
         ↓
-Reconciliation and Settlement Process
+Reconciliation Engine
+        ↓
+Settlement Decision
 ```
 
-A successful transaction at one layer does not automatically prove economic
-success at every other layer.
+Each layer may observe only part of the system.
 
-Examples include:
+A successful result at one layer does not automatically establish economic
+correctness at every later layer.
 
-* a token function returns `false` without reverting;
-* a token returns no value despite an expected Boolean interface;
-* an event reports an amount that differs from the realized balance change;
-* a fee-on-transfer token credits less than the requested amount;
-* an integration assumes the wrong decimal scale;
-* a bridge message is processed more than once;
-* a custody ledger credits value before final settlement;
-* remote minted supply exceeds the amount locked on the canonical chain.
+### 4.1 Representative Failure Classes
 
-SPECTRA models these failures as state, transition, evidence, and
-reconciliation problems rather than treating them as isolated API issues.
+#### Return-Semantics Failure
+
+A contract may return `false` instead of reverting.
+
+If an integration equates:
+
+```text
+transaction did not revert
+```
+
+with:
+
+```text
+transfer succeeded
+```
+
+its local state may diverge from realized contract state.
+
+#### Realized-Amount Failure
+
+A transfer request may specify:
+
+```text
+100 units
+```
+
+while the recipient receives less because of transfer mechanics such as a fee.
+
+If an external ledger credits the requested amount rather than the realized
+amount, accounting divergence is introduced.
+
+#### Event-State Failure
+
+An integration may treat an event as authoritative evidence of a state change.
+
+If event interpretation and realized state disagree, event-driven accounting,
+indexing, monitoring, or reconciliation may become inconsistent.
+
+#### Precision Failure
+
+A raw amount can represent different economic quantities under different
+decimal scales.
+
+For example:
+
+```text
+raw amount = 1,000,000
+```
+
+under scale `6` represents:
+
+```text
+1
+```
+
+while the same raw amount under another scale represents a different
+human-readable quantity.
+
+A scale assumption is therefore an accounting assumption.
+
+#### Authorization Failure
+
+Similar-looking approval and transfer interfaces do not guarantee identical
+authorization behavior.
+
+An integration that normalizes authorization incorrectly may create either:
+
+```text
+unexpected rejection
+```
+
+or:
+
+```text
+unexpected authority
+```
+
+conditions.
+
+#### Settlement Failure
+
+A custody or exchange ledger may credit value before the underlying transaction
+has reached the settlement state assumed by the business process.
+
+The ledger can therefore report an economically meaningful balance before the
+underlying settlement condition is satisfied.
+
+#### Cross-Chain Supply Failure
+
+A bridge-like system may maintain relationships among:
+
+```text
+canonical locked supply
+burned supply
+remote minted supply
+released supply
+processed messages
+```
+
+If those relationships fail, total represented economic value may diverge
+across domains.
+
+### 4.2 The Integration Boundary Is the Research Boundary
+
+SPECTRA does not treat these failures as unrelated bugs.
+
+They are modeled as manifestations of a broader problem:
+
+> A higher-level system may make an economic claim using evidence produced by a
+> lower-level system whose semantics it has not fully preserved.
+
+The research therefore focuses on boundaries where information changes meaning:
+
+```text
+standard → implementation
+implementation → execution
+execution → observation
+observation → integration
+integration → accounting
+accounting → settlement
+canonical state → remote state
+```
+
+These boundaries are where apparently minor semantic assumptions can become
+security or financial-infrastructure failures.
+
+### 4.3 Intended Research Outputs
+
+SPECTRA aims to produce:
+
+* source-backed standard manifests;
+* explicit mathematical state models;
+* executable domain primitives;
+* deterministic state-transition models;
+* reference implementations;
+* deliberately non-compliant implementations;
+* adversarial scenarios;
+* executable invariants;
+* deterministic traces;
+* conformance evidence;
+* reconciliation evidence;
+* vulnerable-versus-secured comparisons;
+* technical visualizations of divergence.
+
+The project does not assume that every output category will support every
+standard equally.
+
+Evidence strength must remain proportional to the available specification,
+implementation, experiment, and observation boundaries.
+
+### 4.4 Intended Decision Contexts
+
+The research is designed to inform questions such as:
+
+```text
+Is this asset safe to normalize behind the same adapter assumptions?
+
+Does this implementation preserve the behavioral semantics expected by an
+integration?
+
+Can observed events be reconciled with realized state?
+
+Can an internal ledger safely credit the amount it believes was transferred?
+
+Is a decimal conversion exact or policy-dependent?
+
+Does a bridge accounting relationship preserve the modeled supply invariant?
+
+Which assumptions must remain explicit before two systems can be treated as
+equivalent?
+```
+
+SPECTRA does not answer these questions through interface similarity alone.
+
+It attempts to answer them through explicit models, deterministic execution,
+invariants, reconciliation conditions, and bounded evidence.
 
 ---
 
