@@ -2,39 +2,33 @@
 
 ## Cross-Standard Asset Protocol Security Observatory
 
-> An executable and evidence-driven research laboratory for analyzing
-> asset-standard semantics, protocol invariants, interoperability failures,
-> and financial-settlement risks across blockchain ecosystems.
+> An executable, evidence-driven research laboratory for studying where
+> apparently compatible asset systems diverge in execution, authorization,
+> numeric interpretation, accounting, and settlement semantics.
 
-| Field                  | Current value                                                                  |
+| Field                  | Current State                                                                  |
 | ---------------------- | ------------------------------------------------------------------------------ |
 | Repository             | `spectra-asset-protocol-lab`                                                   |
-| Current phase          | Quantitative numeric-semantics specification                                   |
 | Project type           | Independent protocol-security and financial-infrastructure research laboratory |
-| Primary language       | English                                                                        |
-| Runtime family         | Node.js 24 LTS                                                                 |
-| TypeScript             | 7.0.2                                                                          |
-| Executable scope       | Strict TypeScript runtime and integer base-unit `Amount` primitive             |
-| Working specifications | State Model v0.1.1 and Quantitative Numeric Semantics v0.1.0                   |
+| Current phase          | Quantitative numeric semantics → executable `DecimalScale` design              |
+| Runtime                | Node.js 24                                                                     |
+| TypeScript             | 7.0.2, strict configuration                                                    |
+| Executable scope       | Integer base-unit `Amount` primitive and arithmetic                            |
+| Working specifications | State Model v0.1.1; Quantitative Numeric Semantics v0.1.0                      |
+| Executable tests       | 8                                                                              |
 | Status                 | Experimental and under active development                                      |
 | Production readiness   | Not claimed                                                                    |
 | Formal verification    | Not claimed                                                                    |
 
 ---
 
-## 1. Executive Summary
+## 1. The Problem
 
-SPECTRA is an independent protocol-security and financial-infrastructure
-research project for studying how fungible assets behave across heterogeneous
-blockchain, integration, custody, and settlement environments.
+Modern asset infrastructure frequently places heterogeneous blockchain assets
+behind common application-level abstractions.
 
-The project is built around a specific systems problem:
-
-> Interfaces that look compatible can conceal materially different execution,
-> authorization, accounting, precision, event, failure, and settlement
-> semantics.
-
-Two assets may expose operations that appear structurally similar:
+A wallet, exchange, custodian, bridge, payment system, accounting engine, or
+protocol adapter may encounter assets exposing familiar operations such as:
 
 ```text
 transfer
@@ -44,182 +38,132 @@ balanceOf
 totalSupply
 ```
 
-while producing different economic or security outcomes under the same
-high-level integration assumptions.
+Interface similarity, however, does not establish behavioral equivalence.
 
-The difference may arise from:
+Two implementations that appear compatible at the interface boundary may differ
+in:
 
 * return-value behavior;
 * failure signaling;
 * authorization semantics;
 * realized transfer amounts;
 * event-state consistency;
-* decimal and precision rules;
-* fee behavior;
+* decimal and precision interpretation;
 * supply controls;
 * privileged operations;
 * execution-environment assumptions;
 * bridge accounting;
-* custody-ledger policy;
-* settlement and finality assumptions.
+* custody-ledger treatment;
+* settlement assumptions.
 
-SPECTRA therefore does not treat interface similarity as sufficient evidence of
-behavioral, accounting, or settlement equivalence.
+SPECTRA studies the consequences of treating those differences as if they did
+not exist.
 
-The project converts protocol behavior into explicit research artifacts that can
-be reviewed, executed, compared, falsified, and reproduced.
+The central systems problem is:
 
-The intended evidence path is:
+> **A higher-level integration may make an economic or security decision using
+> evidence whose underlying semantics were not preserved across system
+> boundaries.**
 
-```text
-Official Requirement
-        ↓
-Normalized Requirement
-        ↓
-Mathematical State Model
-        ↓
-Executable TypeScript Model
-        ↓
-Reference or Adversarial Implementation
-        ↓
-Executable Test or Scenario
-        ↓
-Deterministic Trace
-        ↓
-Invariant or Conformance Result
-        ↓
-Evidence Record
-        ↓
-Human-Readable Visualization
-```
-
-The long-term objective is not merely to catalogue token standards.
-
-The objective is to determine when apparently compatible asset systems cease to
-be behaviorally or economically equivalent, identify the exact boundary at
-which divergence occurs, and produce reproducible evidence explaining why.
-
-### Current Evidence Boundary
-
-The repository currently contains three distinct maturity layers.
-
-#### Implemented and Executable
+The research surface therefore extends across:
 
 ```text
-strict TypeScript runtime
-integer base-unit Amount primitive
-runtime Amount validation
-canonical zero representation
-exact integer addition
-preconditioned subtraction
-eight executable Amount tests
-GitHub Actions validation workflow
+specification
+    ↓
+implementation
+    ↓
+execution
+    ↓
+observation
+    ↓
+integration
+    ↓
+accounting
+    ↓
+settlement
 ```
 
-These capabilities are supported only within their current implementation,
-runtime, test, and repository boundaries.
-
-#### Specified and Reviewable, but Not Executable
+and, where relevant:
 
 ```text
-Amount and DecimalScale mathematical domains
-decimal scale-factor relationship
-exact encoding and decoding relationships
-exact-representability preconditions
-exact round-trip properties
-known-versus-unknown scale distinction
-scale-source classification
-scale-mismatch error derivation
-conversion-policy taxonomy
-numeric security and financial failure modes
-future implementation and test obligations
-numeric evidence and claim boundaries
+canonical state
+    ↓
+cross-domain mechanism
+    ↓
+remote state
 ```
 
-These behaviors and constraints are documented in the quantitative numeric
-working specification.
-
-They guide implementation but do not establish that corresponding executable
-types, parsers, conversion functions, adapters, or reconciliation mechanisms
-already exist.
-
-#### Planned or Design-Unresolved
-
-```text
-DecimalScale runtime representation
-implementation-level maximum scale
-known-versus-unknown scale runtime type
-canonical exact-decimal input grammar
-decimal parser and formatter APIs
-asset-identity representation
-conversion result and error unions
-residual and dust representation
-cross-scale reconciliation records
-protocol-adapter implementations
-```
-
-These subjects have been identified as required design work, but their complete
-executable contracts have not yet been frozen.
-
-A documented behavior must not be described as executable until an
-implementation and corresponding test evidence exist.
-
-An unresolved design question must not be described as a completed
-specification.
-
-An implemented behavior must not be generalized beyond its explicit runtime,
-model, test, protocol, and evidence boundaries.
+A mismatch introduced at one boundary may invalidate assumptions made at a
+later boundary.
 
 ---
 
-## 2. Problem Statement and Primary Research Question
+## 2. Research Thesis
 
-### 2.1 The Core Problem
+SPECTRA begins with a falsifiable thesis:
 
-Modern asset infrastructure frequently has to normalize heterogeneous systems
-behind common application-level abstractions.
+> Interface-level compatibility is insufficient evidence of behavioral,
+> accounting, or settlement equivalence when execution, failure,
+> authorization, numeric, event, supply, and cross-domain semantics have not
+> been evaluated independently.
 
-A wallet, exchange, custodian, bridge, payment system, accounting engine, or
-protocol adapter may attempt to treat multiple assets through a common
-interface.
+The thesis predicts that systems exposing sufficiently similar interfaces can
+still produce materially different outcomes under the same explicit integration
+assumptions.
 
-The resulting abstraction can create a dangerous assumption:
+This is not treated as a predetermined conclusion.
 
-> If two assets expose sufficiently similar interfaces, an integration can
-> treat their behavior as equivalent.
+Evidence may strengthen the thesis when apparently compatible systems produce
+different:
 
-SPECTRA treats that assumption as a research question rather than a fact.
+* state transitions;
+* authorization outcomes;
+* return or failure behavior;
+* realized transfer amounts;
+* event-state relationships;
+* numeric interpretations;
+* supply relationships;
+* reconciliation results.
 
-The underlying problem is that interface compatibility exists at only one layer.
+Evidence may weaken the thesis when independently implemented systems remain
+equivalent across the tested semantic dimensions under the same explicit
+assumptions.
 
-Economic correctness depends on additional layers:
+Inconclusive experiments remain inconclusive.
 
-```text
-Interface Semantics
-        ↓
-Execution Semantics
-        ↓
-Authorization Semantics
-        ↓
-State-Transition Semantics
-        ↓
-Numeric Semantics
-        ↓
-Event and Observation Semantics
-        ↓
-Integration Semantics
-        ↓
-Ledger Semantics
-        ↓
-Settlement Semantics
-```
+They are not converted into supporting evidence.
 
-A mismatch at any one of these layers may invalidate assumptions made by the
-layers above it.
+---
 
-### 2.2 Failure Chain
+## 3. Primary Research Question
 
-The research problem can be expressed as a failure chain:
+> Can heterogeneous fungible-asset behavior be represented under a shared,
+> executable analytical model strongly enough to identify where interface
+> similarity fails to preserve behavioral, accounting, or settlement
+> assumptions?
+
+This question produces a set of narrower research problems:
+
+1. Which behaviors are explicitly required by each reviewed standard?
+2. Which behaviors are optional, implementation-defined, or unspecified?
+3. Can interface compatibility be separated from behavioral compatibility?
+4. Can relevant asset behavior be modeled as deterministic state transitions?
+5. Which invariants remain meaningful across multiple implementations?
+6. When can requested transfer value differ from realized transfer value?
+7. When can event observations disagree with realized state?
+8. When can decimal or unit interpretation change the represented economic quantity?
+9. When can protocol state and external accounting state diverge?
+10. Under which modeled conditions can canonical and remote supply relationships fail?
+11. What evidence is sufficient to support a bounded conformance statement?
+12. What evidence is sufficient to support a bounded security finding?
+13. Can reference and adversarial implementations be compared under identical ordered inputs?
+14. Can modeled reconciliation and settlement divergence be reproduced deterministically?
+
+---
+
+## 4. Failure Model
+
+A representative failure chain is:
 
 ```text
 Interface Similarity
@@ -237,26 +181,26 @@ Reconciliation Failure
 Security or Financial Loss Condition
 ```
 
-For example, an integration may request a transfer of:
+Consider an integration requesting:
 
 ```text
 1,000,000 base units
 ```
 
-and observe a successful transaction.
+and observing a transaction that completed without reverting.
 
-That observation alone does not prove:
+That observation alone does not establish that:
 
 ```text
-recipient balance increased by 1,000,000
+recipient balance increased by exactly 1,000,000
 sender balance decreased by exactly 1,000,000
-the expected event represents the realized transfer
-the integration used the correct decimal scale
-the internal ledger credited the correct economic quantity
-the transaction reached the settlement state assumed by the custodian
+observed events describe the realized state transition
+the correct decimal scale was applied
+an external ledger recorded the correct economic quantity
+the assumed settlement condition was reached
 ```
 
-SPECTRA studies the difference between:
+SPECTRA therefore separates:
 
 ```text
 requested behavior
@@ -266,335 +210,82 @@ recorded accounting effect
 settled economic effect
 ```
 
-These values may coincide.
+These observations and effects may align.
 
-They must not be assumed to coincide without evidence.
+Their equivalence must be established rather than assumed.
 
-### 2.3 Primary Research Question
+---
 
-The primary research question is:
+## 5. Representative Divergence Classes
 
-> Can transfer, approval, authorization, supply, event, precision, and
-> cross-chain asset behavior be represented under a shared executable model
-> strongly enough to detect semantic inconsistencies, security failures, and
-> financial-settlement divergences before an integration relies on false
-> equivalence assumptions?
+### Return and Failure Semantics
 
-This question is decomposed into the following research problems:
+An integration may interpret successful transaction execution as successful
+asset transfer even when the asset-level result expresses different semantics.
 
-1. Which behaviors are explicitly required by each official standard?
-2. Which behaviors are optional, implementation-specific, or unspecified?
-3. Can interface compatibility be separated from behavioral compatibility?
-4. Can heterogeneous asset behavior be expressed as deterministic state
-   transitions?
-5. Which invariants remain meaningful across different asset implementations?
-6. Under which conditions can requested transfer value differ from realized
-   transfer value?
-7. Under which conditions can event observations disagree with realized state?
-8. When can decimal or unit interpretation create economic-value divergence?
-9. When can on-chain state and off-chain accounting diverge?
-10. When can bridge accounting violate canonical-versus-remote supply
-    relationships?
-11. Which evidence is sufficient to support a conformance claim?
-12. Which evidence is sufficient to support a security finding?
-13. Can vulnerable and secured implementations be compared under identical
-    ordered inputs?
-14. Can settlement divergence be reproduced and measured deterministically?
+SPECTRA treats transaction execution status and modeled economic success as
+separate observations.
 
-### 2.4 Research Objectives
+### Realized Transfer Amount
 
-SPECTRA has six initial research objectives.
+A requested amount and a realized balance change need not be assumed equal.
 
-#### Objective 1 — Normalize Requirements Without Erasing Differences
-
-Extract source-backed requirements from heterogeneous asset standards and map
-them into a common analytical vocabulary without silently converting
-implementation-specific behavior into universal behavior.
-
-#### Objective 2 — Model Behavior as State Transitions
-
-Represent asset operations as explicit preconditions, transitions,
-postconditions, frame conditions, and failure states.
-
-The model should make it possible to ask:
+Transfer mechanics may require the integration to distinguish:
 
 ```text
-What state existed before the operation?
-What input was applied?
-Was the operation valid?
-What state changed?
-What state was required not to change?
-What observable evidence was emitted?
-```
-
-#### Objective 3 — Separate Interface Compatibility from Semantic Compatibility
-
-Determine whether two systems that appear compatible at the API boundary remain
-compatible when evaluated across:
-
-```text
-authorization
-failure
-state transition
-event
-numeric
-supply
-privilege
-settlement
-```
-
-semantics.
-
-#### Objective 4 — Make Divergence Reproducible
-
-Convert ambiguous integration failures into deterministic scenarios that can be
-executed repeatedly under controlled initial states and ordered inputs.
-
-#### Objective 5 — Connect Protocol State to Financial Accounting
-
-Model the relationship between protocol-level state and higher-level accounting
-claims such as:
-
-```text
+requested amount
+debited amount
 credited amount
-custody balance
-locked supply
-remote minted supply
-pending settlement
-finalized settlement
 ```
 
-without claiming that the shared model reproduces every production system.
+rather than collapsing them into one value.
 
-#### Objective 6 — Produce Bounded Evidence
+### Event–State Consistency
 
-Every conclusion must state:
+Events can serve as integration evidence, but event interpretation must remain
+consistent with the modeled resulting state.
 
-```text
-what was tested
-what was observed
-which invariant or requirement was evaluated
-which assumptions were required
-which systems were included
-which systems were excluded
-what remains unresolved
-```
+SPECTRA does not treat event observation as independent proof of state.
 
-SPECTRA values bounded, reproducible evidence over broad security claims.
+### Numeric and Scale Interpretation
 
-### 2.5 Research Success Criteria
-
-The project is considered successful only when it can move beyond statements
-such as:
-
-```text
-these standards are similar
-```
-
-and produce claims of the form:
-
-```text
-Given initial state S,
-ordered input I,
-implementation or manifest M,
-and explicit assumptions A,
-
-the system produced transition S → S',
-
-which satisfied or violated requirement R
-and invariant V,
-
-with evidence E.
-```
-
-The strongest intended output is therefore not a compatibility label.
-
-It is a reproducible explanation of:
-
-```text
-where two systems agree
-where they diverge
-why they diverge
-which assumptions caused the divergence
-what evidence supports the conclusion
-```
-
----
-
-## 3. Research Thesis
-
-SPECTRA begins with the following falsifiable thesis:
-
-> Interface-level compatibility is insufficient to establish protocol or
-> settlement equivalence unless return handling, failure signaling,
-> authorization, event-state consistency, realized transfer amounts,
-> precision rules, execution-environment assumptions, and cross-chain
-> accounting are evaluated independently.
-
-The thesis predicts that systems sharing a familiar asset interface can still
-produce materially different security or financial outcomes when evaluated
-under identical higher-level integration assumptions.
-
-The thesis is not treated as a predetermined conclusion.
-
-### 3.1 Supporting Evidence
-
-Evidence may strengthen the thesis when equivalent-looking interfaces produce
-different:
-
-* state transitions;
-* authorization outcomes;
-* return behavior;
-* realized transfer amounts;
-* event-state relationships;
-* precision results;
-* supply relationships;
-* reconciliation results.
-
-### 3.2 Weakening Evidence
-
-Evidence may weaken the thesis when multiple standards or implementations
-produce equivalent behavior across the tested semantic dimensions under the
-same explicit assumptions.
-
-### 3.3 Falsification Discipline
-
-The project must actively search for:
-
-* evidence supporting the thesis;
-* evidence weakening the thesis;
-* conditions under which the thesis becomes false;
-* assumptions required for equivalence;
-* behaviors that remain unresolved;
-* limitations of every experiment.
-
-A result that contradicts the initial thesis is not a project failure.
-
-An experiment that cannot distinguish a claim from its alternative is an
-evidence-design failure and must be redesigned or reported as inconclusive.
-
----
-
-## 4. Why This Problem Matters
-
-Asset infrastructure spans independently implemented technical and accounting
-layers.
-
-A simplified path may look like:
-
-```text
-Smart Contract
-        ↓
-Blockchain Execution Environment
-        ↓
-RPC or Indexing Layer
-        ↓
-Wallet, Exchange, Bridge, or Custodian Adapter
-        ↓
-Internal Ledger
-        ↓
-Reconciliation Engine
-        ↓
-Settlement Decision
-```
-
-Each layer may observe only part of the system.
-
-A successful result at one layer does not automatically establish economic
-correctness at every later layer.
-
-### 4.1 Representative Failure Classes
-
-#### Return-Semantics Failure
-
-A contract may return `false` instead of reverting.
-
-If an integration equates:
-
-```text
-transaction did not revert
-```
-
-with:
-
-```text
-transfer succeeded
-```
-
-its local state may diverge from realized contract state.
-
-#### Realized-Amount Failure
-
-A transfer request may specify:
-
-```text
-100 units
-```
-
-while the recipient receives less because of transfer mechanics such as a fee.
-
-If an external ledger credits the requested amount rather than the realized
-amount, accounting divergence is introduced.
-
-#### Event-State Failure
-
-An integration may treat an event as authoritative evidence of a state change.
-
-If event interpretation and realized state disagree, event-driven accounting,
-indexing, monitoring, or reconciliation may become inconsistent.
-
-#### Precision Failure
-
-A raw amount can represent different economic quantities under different
-decimal scales.
+The same raw integer can represent different human-readable quantities under
+different decimal scales.
 
 For example:
 
 ```text
 raw amount = 1,000,000
+scale      = 6
 ```
 
-under scale `6` represents:
+represents:
 
 ```text
 1
 ```
 
-while the same raw amount under another scale represents a different
-human-readable quantity.
+The interpretation of scale is therefore part of the accounting model.
 
-A scale assumption is therefore an accounting assumption.
+### Authorization Semantics
 
-#### Authorization Failure
-
-Similar-looking approval and transfer interfaces do not guarantee identical
+Similar transfer and approval interfaces do not establish identical
 authorization behavior.
 
-An integration that normalizes authorization incorrectly may create either:
+Authorization requirements must be modeled explicitly rather than inferred from
+interface shape.
 
-```text
-unexpected rejection
-```
+### Accounting and Settlement
 
-or:
+An external ledger may record value before the underlying system reaches the
+settlement condition assumed by the integration.
 
-```text
-unexpected authority
-```
+Protocol state, observed state, accounting state, and settlement state are
+therefore modeled as distinct analytical layers.
 
-conditions.
+### Cross-Domain Supply Relationships
 
-#### Settlement Failure
-
-A custody or exchange ledger may credit value before the underlying transaction
-has reached the settlement state assumed by the business process.
-
-The ledger can therefore report an economically meaningful balance before the
-underlying settlement condition is satisfied.
-
-#### Cross-Chain Supply Failure
-
-A bridge-like system may maintain relationships among:
+Cross-domain mechanisms may create relationships among values such as:
 
 ```text
 canonical locked supply
@@ -604,277 +295,228 @@ released supply
 processed messages
 ```
 
-If those relationships fail, total represented economic value may diverge
-across domains.
+SPECTRA will test explicitly defined relationships among these values rather
+than assuming conservation from interface behavior alone.
 
-### 4.2 The Integration Boundary Is the Research Boundary
+---
 
-SPECTRA does not treat these failures as unrelated bugs.
+## 6. Research Method
 
-They are modeled as manifestations of a broader problem:
-
-> A higher-level system may make an economic claim using evidence produced by a
-> lower-level system whose semantics it has not fully preserved.
-
-The research therefore focuses on boundaries where information changes meaning:
+SPECTRA converts protocol statements and observed behavior into increasingly
+strong evidence artifacts.
 
 ```text
-standard → implementation
-implementation → execution
-execution → observation
-observation → integration
-integration → accounting
-accounting → settlement
-canonical state → remote state
+Official Requirement
+        ↓
+Normalized Requirement
+        ↓
+Mathematical State Model
+        ↓
+Executable Domain Model
+        ↓
+Reference or Adversarial Implementation
+        ↓
+Executable Test or Scenario
+        ↓
+Deterministic Trace
+        ↓
+Invariant or Conformance Evaluation
+        ↓
+Evidence Record
+        ↓
+Trace-Driven Visualization
 ```
 
-These boundaries are where apparently minor semantic assumptions can become
-security or financial-infrastructure failures.
+Each stage has a different evidentiary meaning.
 
-### 4.3 Intended Research Outputs
+Documentation is not executable evidence.
 
-SPECTRA aims to produce:
+A passing test is not a security proof.
 
-* source-backed standard manifests;
-* explicit mathematical state models;
-* executable domain primitives;
-* deterministic state-transition models;
-* reference implementations;
-* deliberately non-compliant implementations;
-* adversarial scenarios;
-* executable invariants;
-* deterministic traces;
-* conformance evidence;
-* reconciliation evidence;
-* vulnerable-versus-secured comparisons;
-* technical visualizations of divergence.
+A model is not automatically a protocol implementation.
 
-The project does not assume that every output category will support every
-standard equally.
+A protocol implementation is not automatically a representation of a
+production integration environment.
 
-Evidence strength must remain proportional to the available specification,
-implementation, experiment, and observation boundaries.
+SPECTRA keeps these boundaries explicit.
 
-### 4.4 Intended Decision Contexts
+---
 
-The research is designed to inform questions such as:
+## 7. Evidence Policy
+
+Material claims are classified using the following evidence categories.
+
+### `SPECIFIED`
+
+A reviewed normative source explicitly requires, recommends, permits, or
+prohibits the behavior.
+
+### `INFERRED`
+
+The conclusion is derived from reviewed primary sources but is not expressed as
+a direct normative requirement.
+
+### `UNSPECIFIED`
+
+The reviewed source does not define the behavior precisely enough to support a
+conformance decision.
+
+### `EXPERIMENTALLY_OBSERVED`
+
+The behavior was reproduced by a documented implementation, test, or scenario
+under a defined environment.
+
+### `PROJECT_DEFINED`
+
+The behavior, invariant, model, or profile belongs to SPECTRA rather than an
+external standard.
+
+A claim must not silently move from one evidence class to another.
+
+---
+
+## 8. Research Success Criterion
+
+SPECTRA is not designed to produce statements such as:
 
 ```text
-Is this asset safe to normalize behind the same adapter assumptions?
-
-Does this implementation preserve the behavioral semantics expected by an
-integration?
-
-Can observed events be reconciled with realized state?
-
-Can an internal ledger safely credit the amount it believes was transferred?
-
-Is a decimal conversion exact or policy-dependent?
-
-Does a bridge accounting relationship preserve the modeled supply invariant?
-
-Which assumptions must remain explicit before two systems can be treated as
-equivalent?
+Standard A and Standard B are compatible.
 ```
 
-SPECTRA does not answer these questions through interface similarity alone.
+The intended output is more constrained.
 
-It attempts to answer them through explicit models, deterministic execution,
-invariants, reconciliation conditions, and bounded evidence.
-
----
-
-## 5. Initial Standard Scope
-
-The initial comparative scope covers:
-
-### 5.1 ERC-20
-
-ERC-20 provides the initial reference family for fungible-token interfaces,
-balances, transfers, approvals, allowances, and events within the Ethereum
-ecosystem.
-
-SPECTRA does not assume that every deployed ERC-20-like contract follows
-identical return, failure, fee, event, supply, or privilege behavior.
-
-### 5.2 TRC-20
-
-TRC-20 exposes an ERC-20-like asset interface in the TRON ecosystem.
-
-SPECTRA evaluates interface similarity separately from:
-
-* TVM execution assumptions;
-* resource behavior;
-* failure signaling;
-* event interpretation;
-* wallet and exchange integration behavior.
-
-### 5.3 BEP-20
-
-BEP-20 belongs to the ERC-20-compatible interface family used on BNB Smart
-Chain.
-
-SPECTRA separately evaluates:
-
-* metadata requirements;
-* EVM-level compatibility;
-* chain-specific execution assumptions;
-* cross-chain supply interpretation;
-* confirmation and finality assumptions.
-
-### 5.4 ARC-200
-
-ARC-200 defines a smart-contract token interface for Algorand.
-
-Although conceptually influenced by ERC-20, it operates under a different
-application, ABI, state, and execution environment.
-
-SPECTRA does not treat conceptual similarity as binary or adapter-level
-compatibility.
-
----
-
-## 6. SASP-1
-
-### Secure Asset Semantics Profile — Experimental Draft
-
-SASP-1 is a project-defined experimental profile for expressing
-security-critical asset behavior in a deterministic, testable, and
-machine-readable form.
-
-SASP-1 is intended to normalize categories such as:
-
-* interface requirements;
-* return semantics;
-* failure semantics;
-* authorization rules;
-* event requirements;
-* balance transitions;
-* allowance transitions;
-* supply controls;
-* privilege extensions;
-* decimal and precision behavior;
-* integration assumptions;
-* tested invariants;
-* known limitations.
-
-SASP-1 is not:
-
-* an official blockchain standard;
-* an accepted industry proposal;
-* a production-ready token specification;
-* a replacement for ERC-20, TRC-20, BEP-20, or ARC-200;
-* proof that an implementation is secure.
-
----
-
-## 7. Frozen MVP
-
-The initial SPECTRA MVP is intentionally constrained.
-
-It is designed to contain:
-
-1. four source-backed asset-standard manifests;
-2. one experimental SASP-1 manifest;
-3. one deterministic TypeScript state-transition model;
-4. one minimal ERC-20-compatible reference implementation;
-5. deliberately non-compliant and secured contract variants;
-6. four adversarial scenario families;
-7. eight explicitly defined security invariants;
-8. vulnerable-versus-secured execution comparisons;
-9. deterministic trace records;
-10. evidence-driven technical visualizations.
-
-### Initial Adversarial Scenario Families
-
-* allowance state race;
-* non-standard transfer semantics;
-* precision and settlement divergence;
-* cross-chain supply violation.
-
-### Out of MVP Scope
-
-The initial MVP does not include:
-
-* production mainnet deployment;
-* production custody infrastructure;
-* a production bridge;
-* a complete ARC-200 implementation;
-* comprehensive coverage of all asset standards;
-* complete consensus modeling;
-* validator-economic analysis;
-* production key-management infrastructure;
-* complete formal verification;
-* proof of vulnerability absence;
-* trading or investment functionality.
-
----
-
-## 8. Current Executable Foundation
-
-SPECTRA now contains its first executable TypeScript foundation.
-
-### 8.1 Runtime and Compiler Baseline
-
-The executable workspace currently uses:
+A useful result has the form:
 
 ```text
-Node.js:         >=24 <25
-TypeScript:      7.0.2
-Module system:   ECMAScript Modules
-Resolution:      NodeNext
-Test runner:     node:test
-Package manager: npm
+Given:
+
+initial state S,
+ordered input I,
+implementation or manifest M,
+explicit assumptions A,
+
+the system produced:
+
+transition S → S'
+
+which satisfied or violated:
+
+requirement R
+invariant V
+
+with evidence E.
 ```
 
-The repository includes:
-
-* an explicit Node.js runtime family;
-* exact direct-dependency versions;
-* a committed dependency lockfile;
-* strict TypeScript compiler checks;
-* deterministic build and test commands;
-* cross-platform editor and line-ending rules;
-* generated-output exclusions.
-
-### 8.2 Strict TypeScript Policy
-
-The current compiler configuration enables:
+The strongest intended result is therefore a reproducible explanation of:
 
 ```text
-strict
-noUncheckedIndexedAccess
-exactOptionalPropertyTypes
-noImplicitOverride
-noFallthroughCasesInSwitch
-noImplicitReturns
-noPropertyAccessFromIndexSignature
-useUnknownInCatchVariables
-verbatimModuleSyntax
-isolatedModules
-forceConsistentCasingInFileNames
-noEmitOnError
+where systems agree
+where they diverge
+why they diverge
+which assumptions are required
+which invariant or requirement is affected
+what evidence supports the conclusion
+what remains unresolved
 ```
-
-These checks reduce avoidable ambiguity at the executable model boundary.
-
-They do not replace runtime validation, testing, threat modeling, or formal
-reasoning.
 
 ---
 
-## 9. Amount Domain Primitive
+## 9. Current Evidence Boundary
 
-The first executable financial-domain primitive is located at:
+The repository currently contains three maturity layers.
+
+### Implemented and Executable
+
+```text
+strict TypeScript runtime
+integer base-unit Amount primitive
+runtime Amount validation
+canonical zero representation
+exact integer addition
+preconditioned subtraction
+eight executable Amount tests
+GitHub Actions validation workflow
+```
+
+These claims apply only within the current implementation, runtime, repository,
+and test boundaries.
+
+### Specified and Reviewable, but Not Executable
+
+```text
+Amount and DecimalScale mathematical domains
+decimal scale-factor relationship
+exact encoding and decoding relationships
+exact-representability preconditions
+round-trip properties
+known-versus-unknown scale distinction
+scale-source classification
+scale-mismatch analysis
+conversion-policy taxonomy
+numeric failure modes
+future implementation requirements
+test obligations
+evidence boundaries
+```
+
+These behaviors are described in the quantitative numeric working
+specification.
+
+They do not establish corresponding executable implementations.
+
+### Planned or Design-Unresolved
+
+```text
+DecimalScale runtime representation
+implementation-level maximum scale
+known-versus-unknown scale runtime type
+canonical exact-decimal grammar
+decimal parser and formatter
+asset identity
+scale-source runtime representation
+conversion error model
+residual and dust representation
+cross-scale reconciliation
+protocol adapters
+```
+
+A documented behavior is not described as executable until implementation and
+test evidence exist.
+
+An unresolved design question is not described as a completed specification.
+
+An implemented behavior is not generalized beyond its explicit evidence
+boundary.
+
+---
+
+## 10. Current Executable Foundation
+
+### Runtime
+
+```text
+Node.js:       >=24 <25
+TypeScript:    7.0.2
+Modules:       ECMAScript Modules
+Resolution:    NodeNext
+Test runner:   node:test
+Package:       npm
+```
+
+The compiler baseline includes strict TypeScript checks.
+
+Those checks improve model discipline but do not replace runtime validation,
+testing, threat modeling, or formal reasoning.
+
+### `Amount`
+
+The first executable financial-domain primitive is:
 
 ```text
 model/amount.ts
 ```
 
-`Amount` represents a non-negative integer quantity expressed in integer base
-units.
-
-Its mathematical domain is:
+It models a non-negative integer base-unit quantity.
 
 ```math
 \mathbb{A}
@@ -886,474 +528,246 @@ x \geq 0
 \right\}
 ```
 
-Where:
+The implementation uses `bigint` so that core modeled asset quantities are not
+stored using binary floating-point approximation.
 
-* $\mathbb{A}$ represents the SPECTRA Amount domain;
-* $\mathbb{Z}$ represents the set of all integers;
-* $x \geq 0$ restricts valid values to zero and positive integers;
-* negative integers are excluded from the Amount domain;
-* fractional values are excluded because core amounts are represented in
-  integer base units.
-
-The Amount domain is a proper subset of the integer domain:
-
-```math
-\mathbb{A} \subsetneq \mathbb{Z}
-```
-
-This relationship is strict because negative integers belong to
-$\mathbb{Z}$ but do not belong to $\mathbb{A}$.
-
-Every valid `Amount` is an integer, but not every integer is a valid `Amount`.
-
-For example:
-
-```math
-0 \in \mathbb{A}
-```
-
-```math
-5 \in \mathbb{A}
-```
-
-```math
--5 \notin \mathbb{A}
-```
-
-Therefore:
+The current primitive supports:
 
 ```text
-0     is a valid Amount
-1     is a valid Amount
-1000  is a valid Amount
--1    is not a valid Amount
-1.5   is not a valid Amount
+construction
+runtime validation
+canonical zero
+exact addition
+preconditioned subtraction
 ```
 
-### 9.1 Why Integer Base Units
-
-Core asset accounting must not depend on binary floating-point approximation.
-
-Instead of storing a human-readable decimal value such as:
+It does not yet provide:
 
 ```text
-1.25 tokens
+decimal parsing
+decimal formatting
+DecimalScale
+asset identity
+rounding policy
+protocol-specific numeric limits
 ```
 
-the model stores an exact integer number of base units.
+---
 
-For an asset with six decimal places:
+## 11. Quantitative Numeric Semantics
 
-```math
-1.25 \times 10^6 = 1{,}250{,}000
-```
-
-The model therefore stores:
+The numeric working specification separates:
 
 ```text
-1,250,000 base units
+integer base-unit Amount
+DecimalScale
+human-readable interpretation
+asset identity
+scale source
+exact conversion
+conversion policy
+protocol-specific representation
 ```
 
-The relationship between a human-readable amount and its base-unit
-representation is:
+For decimal scale:
 
 ```math
-\text{BaseUnits}
+d \in \mathbb{D}
+```
+
+where:
+
+```math
+\mathbb{D}
 =
-\text{HumanAmount}
-\times
-10^{\text{Decimals}}
+\left\{
+d \in \mathbb{Z}
+\mid
+d \geq 0
+\right\}
 ```
 
-An exact conversion requires:
+The scale factor is:
 
 ```math
-\text{HumanAmount}
-\times
-10^{\text{Decimals}}
-\in
-\mathbb{Z}
+P(d) = 10^d
 ```
 
-When this condition is not satisfied, the human-readable value cannot be
-represented exactly under the selected decimal scale without an explicit
-rounding, truncation, or rejection policy.
-
-The reverse relationship is:
+For base-unit amount (b):
 
 ```math
-\text{HumanAmount}
+decode_d(b)
 =
-\frac{\text{BaseUnits}}{10^{\text{Decimals}}}
+\frac{b}{10^d}
 ```
 
-These equations describe the intended numeric relationship only.
+Exact encoding of a human-readable value (h) requires:
 
-The initial `Amount` primitive does not select or implement a rounding policy.
+```math
+h \times 10^d \in \mathbb{Z}
+```
 
-The initial `Amount` primitive does not yet implement:
+and:
 
-* decimal-string parsing;
-* token-decimal metadata;
-* scale validation;
-* rounding policy;
-* human-readable formatting.
+```math
+h \times 10^d \geq 0
+```
 
-Those concerns will be introduced through separate and explicitly tested
-numeric-policy layers.
+These relationships are specified.
 
-The current mathematical, protocol, conversion-policy, scale-source,
-asset-identity, exact-representation, and numeric-evidence boundaries are
-documented in:
+`DecimalScale`, parsing, formatting, and encode/decode APIs are not yet
+implemented.
+
+See:
 
 * [Quantitative Numeric Semantics](docs/numeric-semantics.md)
-
-The document is currently classified as:
-
-```text
-Working Specification v0.1.0
-```
-
-It guides future implementation but does not establish that `DecimalScale`,
-decimal parsing, formatting, encoding, decoding, or conversion-policy behavior
-has already been implemented.
-
-### 9.2 Why `bigint`
-
-JavaScript `number` cannot exactly represent every integer required for
-high-precision asset accounting.
-
-SPECTRA therefore uses `bigint` for the shared amount domain.
-
-`bigint` provides exact integer arithmetic for modeled values, subject to
-available runtime resources.
-
-It does not independently solve:
-
-* decimal parsing;
-* scale interpretation;
-* rounding policy;
-* protocol-specific numeric limits;
-* JSON serialization;
-* asset identity;
-* currency or unit mismatches.
-
-### 9.3 Why a Branded Type
-
-A plain alias such as:
-
-```typescript
-type Amount = bigint;
-```
-
-would not distinguish a validated amount from an arbitrary raw integer.
-
-SPECTRA uses a branded type so that the compiler can distinguish:
-
-```text
-unvalidated bigint
-```
-
-from:
-
-```text
-validated Amount
-```
-
-The brand provides a compile-time distinction.
-
-Runtime validation remains necessary because TypeScript types are erased during
-JavaScript emission and do not constitute runtime security boundaries.
-
-### 9.4 Construction Rules
-
-The current constructor accepts:
-
-* zero;
-* positive `bigint` values;
-* non-negative `bigint` values within available runtime resources.
-
-It rejects:
-
-* JavaScript `number`;
-* string representations;
-* `null`;
-* other non-`bigint` values;
-* negative `bigint` values.
-
-A wrong runtime representation produces a `TypeError`.
-
-A negative `bigint` value produces a `RangeError`.
-
-This distinction separates:
-
-```text
-incorrect representation
-```
-
-from:
-
-```text
-correct representation but invalid domain value
-```
-
-### 9.5 Arithmetic Operations
-
-Addition is closed over the Amount domain:
-
-```math
-a,b \in \mathbb{A}
-\Rightarrow
-a+b \in \mathbb{A}
-```
-
-The implementation exposes exact integer addition:
-
-```text
-addAmounts(a, b)
-```
-
-Zero is the additive identity:
-
-```math
-a + 0 = a
-```
-
-Subtraction is not unconditionally closed over the Amount domain.
-
-It requires the precondition:
-
-```math
-b \leq a
-```
-
-Under this precondition:
-
-```math
-a-b \in \mathbb{A}
-```
-
-If $b > a$, the result would be negative and therefore outside the modeled
-Amount domain.
-
-The implementation rejects such subtraction instead of returning an invalid
-Amount.
-
-### 9.6 Numeric Scope Boundary
-
-The shared `Amount` domain currently has no protocol-specific upper bound.
-
-This is intentional.
-
-Constraints such as:
-
-```text
-EVM uint256 maximum
-protocol-specific supply cap
-database integer width
-exchange ledger limit
-custody-system accounting limit
-```
-
-will be modeled through narrower types or explicit policy layers rather than
-being silently imposed on the cross-standard base domain.
-
-The current Amount implementation therefore establishes only the following
-claim:
-
-```math
-x \in \mathbb{Z}
-\land
-x \geq 0
-```
-
-It does not establish:
-
-* protocol-specific representability;
-* database-storage compatibility;
-* serialization compatibility;
-* asset-decimal correctness;
-* production accounting suitability.
-
----
-
-## 10. Current Test Coverage
-
-The initial amount test suite is located at:
-
-```text
-test/amount.test.ts
-```
-
-It currently verifies:
-
-1. zero and positive `bigint` construction;
-2. large integer construction;
-3. rejection of non-`bigint` runtime inputs;
-4. rejection of negative values;
-5. runtime amount-predicate behavior;
-6. canonical zero representation;
-7. exact integer addition;
-8. valid subtraction and domain-underflow rejection.
-
-The current tests provide evidence for the explicitly tested behaviors only.
-
-They do not prove:
-
-* complete correctness;
-* security of the wider system;
-* correctness of future state transitions;
-* absence of all numeric edge cases;
-* protocol conformance;
-* settlement equivalence.
-
-Future testing layers will include:
-
-* property-oriented tests;
-* algebraic-law tests;
-* fuzz tests;
-* stateful invariant tests;
-* deterministic replay tests;
-* adversarial integration scenarios.
-
----
-
-## 11. System Architecture
-
-```mermaid
-flowchart LR
-    A[Official Specifications] --> B[Normalized Requirements]
-    B --> C[Standard JSON Manifests]
-    C --> D[SASP-1 Experimental Profile]
-
-    D --> E[Deterministic TypeScript Model]
-    D --> F[Reference and Adversarial Contracts]
-
-    E --> G[Scenario Runner]
-    F --> H[Foundry Test Layer]
-
-    G --> I[Deterministic Traces]
-    H --> I
-
-    I --> J[Conformance Engine]
-    I --> K[Invariant Evaluator]
-
-    J --> L[Evidence Records]
-    K --> L
-
-    L --> M[Visual Observatory]
-```
-
-### Architecture Principle
-
-No visualization, compatibility statement, finding, or security claim should
-exist independently from its underlying evidence.
 
 ---
 
 ## 12. Working Specifications
 
-### 12.1 State-Transition Foundation
+### State Model
 
-The global research state is currently divided into five connected domains:
+[State Model](docs/state-model.md)
 
-```text
-Global State
-├── Token State
-├── Protocol-Control State
-├── Simplified Bridge State
-├── Integration and Custody State
-└── Observation and Evidence State
-```
-
-The mathematical working specification is documented in:
-
-* [State Model](docs/state-model.md)
-* [Documentation Index](docs/README.md)
-
-The specification defines:
-
-* the global state boundary;
-* integer base-unit accounting;
-* transition inputs;
-* success and failure results;
-* preconditions;
-* postconditions;
-* failure preservation;
-* reachable states;
-* foundational invariants;
-* reconciliation checkpoints;
-* frame conditions;
-* deterministic trace requirements;
-* known limitations.
-
-The document is currently classified as:
+Current classification:
 
 ```text
 Working Specification v0.1.1
 ```
 
-The specification is sufficient to guide executable development but remains
-subject to test-driven and evidence-driven revision.
+It defines the current mathematical and transition-model foundation.
 
-### 12.2 Quantitative Numeric Semantics
+### Quantitative Numeric Semantics
 
-The quantitative numeric working specification is documented in:
+[Quantitative Numeric Semantics](docs/numeric-semantics.md)
 
-* [Quantitative Numeric Semantics](docs/numeric-semantics.md)
-
-The specification separates:
-
-```text
-integer base-unit Amount
-decimal scale
-human-readable decimal interpretation
-asset identity
-scale source
-exact conversion
-rounding or rejection policy
-protocol-specific numeric representation
-```
-
-It defines:
-
-* the shared Amount and DecimalScale mathematical domains;
-* decimal scale factors;
-* exact encoding and decoding relationships;
-* exact-representability preconditions;
-* round-trip properties;
-* known-versus-unknown scale semantics;
-* asset and unit compatibility boundaries;
-* source-backed ERC-20, native-USDC, Stellar, and CCTP cases;
-* scale-mismatch error analysis;
-* explicit conversion-policy classes;
-* numeric security and financial failure modes;
-* future implementation requirements;
-* executable test obligations;
-* unresolved design questions;
-* evidence and claim boundaries.
-
-The document is currently classified as:
+Current classification:
 
 ```text
 Working Specification v0.1.0
 ```
 
-The specification does not yet provide:
+It defines the current Amount, scale, exactness, conversion-policy, and numeric
+evidence boundaries.
 
-* an executable `DecimalScale` type;
-* a decimal parser;
-* a formatter;
-* an encoding or decoding API;
-* a conversion-policy engine;
-* an asset-identity implementation;
-* production accounting guarantees;
-* protocol-conformance proof;
-* settlement-equivalence proof.
+### Documentation Index
+
+[Documentation Index](docs/README.md)
 
 ---
 
-## 13. Repository Structure
+## 13. Comparative Research Scope
+
+The planned comparative program begins with four asset-standard families:
+
+```text
+ERC-20
+TRC-20
+BEP-20
+ARC-200
+```
+
+The purpose is not to assume that these systems are equivalent.
+
+The purpose is to extract source-backed requirements and identify where
+apparently similar abstractions preserve or fail to preserve modeled semantics.
+
+Machine-readable standard manifests are planned work and are not yet
+implemented.
+
+---
+
+## 14. SASP-1
+
+### Secure Asset Semantics Profile — Experimental Research Construct
+
+SASP-1 is a project-defined experimental profile intended to express
+security-relevant asset behavior in a deterministic and machine-readable form.
+
+Planned categories include:
+
+* interface requirements;
+* return and failure semantics;
+* authorization rules;
+* event requirements;
+* balance transitions;
+* allowance transitions;
+* supply controls;
+* privilege extensions;
+* decimal behavior;
+* integration assumptions;
+* tested invariants;
+* known limitations.
+
+SASP-1 is not:
+
+* an official blockchain standard;
+* an accepted industry proposal;
+* a production-ready token specification;
+* a replacement for existing standards;
+* evidence that an implementation is secure.
+
+The SASP-1 manifest remains planned work.
+
+---
+
+## 15. System Architecture
+
+```mermaid
+flowchart LR
+    A[Official Specifications] --> B[Normalized Requirements]
+    B --> C[Standard Manifests]
+
+    C --> D[Shared State and Numeric Model]
+
+    D --> E[Deterministic TypeScript Model]
+    C --> F[Reference and Adversarial Implementations]
+
+    E --> G[Scenario Runner]
+    F --> H[Execution Test Layer]
+
+    G --> I[Deterministic Traces]
+    H --> I
+
+    I --> J[Conformance Evaluation]
+    I --> K[Invariant Evaluation]
+
+    J --> L[Evidence Records]
+    K --> L
+
+    L --> M[Trace-Driven Visualizations]
+```
+
+### Architecture Principle
+
+No visualization, compatibility statement, finding, or security claim should
+exist independently from the evidence supporting it.
+
+---
+
+## 16. Planned Invariant Program
+
+The initial research program currently identifies the following invariant
+families:
+
+1. supply conservation;
+2. balance conservation under explicitly defined transfer semantics;
+3. authorization integrity;
+4. allowance safety;
+5. event–state consistency;
+6. replay uniqueness;
+7. settlement consistency;
+8. deterministic replay.
+
+These are research targets.
+
+They must not be described as executable invariants until corresponding model,
+implementation, and test evidence exist.
+
+---
+
+## 17. Repository Structure
 
 Current tracked structure:
 
@@ -1379,19 +793,10 @@ spectra-asset-protocol-lab/
 └── README.md
 ```
 
-### Current Responsibilities
-
-```text
-docs/       research documentation and mathematical specifications
-model/      deterministic TypeScript domain and state model
-standards/  machine-readable standard-manifest workspace
-test/       executable unit, boundary, invariant, and replay tests
-```
-
-### Planned Directories
-
-Directories are introduced only when they contain substantive and reviewable
+Directories are added only when they contain substantive and reviewable
 artifacts.
+
+Planned areas include:
 
 ```text
 contracts/
@@ -1400,74 +805,29 @@ scripts/
 frontend/
 ```
 
-Planned responsibilities:
-
-```text
-contracts/  reference, vulnerable, and secured Solidity implementations
-traces/     generated deterministic execution evidence
-scripts/    validation, replay, and evidence-generation tooling
-frontend/   trace-driven visual observatory
-```
-
 ---
 
-## 14. Getting Started
+## 18. Validation
 
-### 14.1 Supported Development Environments
-
-Primary environment:
-
-```text
-macOS on Apple Silicon
-```
-
-Secondary environment:
-
-```text
-Windows with WSL2 Ubuntu
-```
-
-Native Windows PowerShell is not currently the primary executable-model
-environment.
-
-### 14.2 Prerequisites
-
-* Git;
-* Node Version Manager;
-* Node.js 24;
-* npm;
-* VS Code or another TypeScript-capable editor.
-
-### 14.3 Clone and Enter the Repository
-
-```bash
-git clone <repository-location>
-cd spectra-asset-protocol-lab
-```
-
-### 14.4 Select the Runtime
+Install the repository runtime:
 
 ```bash
 nvm use
 ```
 
-The repository-level `.nvmrc` selects Node.js 24.
-
-### 14.5 Install Exact Dependencies
+Install the exact dependency graph:
 
 ```bash
 npm ci
 ```
 
-`npm ci` installs the dependency graph recorded in `package-lock.json`.
-
-### 14.6 Run the Complete Validation Boundary
+Run the complete current validation boundary:
 
 ```bash
 npm run check
 ```
 
-This runs:
+The command currently covers:
 
 ```text
 TypeScript type checking
@@ -1479,479 +839,141 @@ JavaScript emission
 Node.js test execution
 ```
 
----
+A successful validation run supports only the behavior directly covered by the
+current implementation and tests.
 
-## 15. Available Commands
-
-### Type Check
-
-```bash
-npm run typecheck
-```
-
-Checks TypeScript source files without producing build output.
-
-### Build
-
-```bash
-npm run build
-```
-
-Removes previous generated output and compiles the project into:
-
-```text
-dist/
-```
-
-### Test
-
-```bash
-npm test
-```
-
-Builds the project and runs emitted JavaScript tests through the Node.js test
-runner.
-
-### Complete Check
-
-```bash
-npm run check
-```
-
-Runs both type checking and executable tests.
-
-### Clean
-
-```bash
-npm run clean
-```
-
-Removes generated build output.
-
-Generated files are not committed to the repository.
+It does not establish complete correctness or system security.
 
 ---
 
-## 16. Planned Security Invariants
-
-The initial invariant program includes:
-
-### INV-01 — Supply Conservation
-
-Value must not be created or destroyed outside explicitly authorized supply
-transitions.
-
-### INV-02 — Balance Conservation
-
-Ordinary transfers must preserve modeled aggregate balances when no fee, mint,
-burn, or rebase behavior is enabled.
-
-### INV-03 — Authorization Integrity
-
-An actor must not modify balances, allowances, supply, or control state without
-the required authority.
-
-### INV-04 — Allowance Safety
-
-Delegated spending must not exceed valid authorization or preserve stale
-authorization unexpectedly.
-
-### INV-05 — Event–State Consistency
-
-Events used as integration evidence must remain consistent with the resulting
-state transition.
-
-### INV-06 — Replay Uniqueness
-
-A protected cross-chain or settlement message must not be accepted more than
-once.
-
-### INV-07 — Settlement Consistency
-
-At a valid reconciliation checkpoint, the amount credited by an integration
-ledger must equal the amount actually received under the selected settlement
-policy.
-
-### INV-08 — Deterministic Replay
-
-The same model version, initial state, explicit environment, and ordered input
-sequence must reproduce the same final-state hash.
-
-Each implemented invariant must eventually include:
-
-* a natural-language definition;
-* a mathematical definition;
-* its model boundary;
-* dependent state variables;
-* valid transition classes;
-* violating scenarios;
-* executable test mappings;
-* deterministic trace evidence;
-* known limitations.
-
----
-
-## 17. Evidence Policy
-
-SPECTRA classifies material claims using the following evidence classes.
-
-### SPECIFIED
-
-The behavior is explicitly required, recommended, permitted, or prohibited by
-a reviewed normative source.
-
-### INFERRED
-
-The behavior is derived from one or more official sources but is not expressed
-as a direct normative requirement.
-
-### UNSPECIFIED
-
-The reviewed source does not define the behavior precisely enough to support a
-conformance decision.
-
-### EXPERIMENTALLY OBSERVED
-
-The behavior was reproduced by a documented implementation, test, or scenario
-under a defined environment.
-
-### PROJECT-DEFINED
-
-The behavior, invariant, model, or profile belongs to SPECTRA rather than an
-external official standard.
-
-No claim should silently move from one evidence class to another.
-
----
-
-## 18. Security-Claim Policy
-
-SPECTRA does not treat any single tool output as proof of security.
-
-The following may provide supporting evidence:
-
-* unit tests;
-* boundary tests;
-* property tests;
-* invariant tests;
-* fuzz tests;
-* stateful tests;
-* static-analysis output;
-* contract execution results;
-* emitted events;
-* transaction status;
-* deterministic traces;
-* reconciliation measurements;
-* visualizations.
-
-However:
-
-```text
-test passed
-```
-
-does not imply:
-
-```text
-system is secure
-```
-
-Similarly:
-
-```text
-static analyzer found no warning
-```
-
-does not imply:
-
-```text
-implementation is vulnerability-free
-```
-
-All conclusions must remain bounded by:
-
-* modeled assumptions;
-* tested behavior;
-* selected environment;
-* source coverage;
-* numeric policy;
-* known limitations.
-
----
-
-## 19. Research and Engineering Principles
-
-1. Official and primary sources take precedence over secondary summaries.
-2. Interface similarity must not be treated as behavioral equivalence.
-3. Financial quantities must carry explicit domain meaning.
-4. Core asset accounting must use integer base units.
-5. Floating-point arithmetic must not be used for core token accounting.
-6. Every important transition must define preconditions and postconditions.
-7. Every transition must identify fields that may and must not change.
-8. Failure behavior must be modeled explicitly.
-9. Events must not be treated as independent proof of state.
-10. Transaction success must not be treated as proof of economic success.
-11. On-chain state and off-chain ledger state must be reconciled separately.
-12. Vulnerable and secured models must receive equivalent ordered inputs.
-13. Deterministic replay must be versioned and reproducible.
-14. Unsupported claims and limitations must remain visible.
-15. TODO-only documents must not be committed as completed research artifacts.
-16. Every commit must represent one independently reviewable logical unit.
-17. Every material branch must pass through Pull Request review before
-    integration.
-
----
-
-## 20. Development Workflow
-
-SPECTRA uses a review-oriented Git workflow.
-
-```text
-Update local main
-        ↓
-Create a focused branch
-        ↓
-Implement one logical unit
-        ↓
-Run local validation
-        ↓
-Inspect the working tree
-        ↓
-Inspect the unstaged diff
-        ↓
-Stage explicit files
-        ↓
-Inspect the staged diff
-        ↓
-Create an atomic commit
-        ↓
-Push the branch
-        ↓
-Open or update a Draft Pull Request
-        ↓
-Review files, commits, tests, and claims
-        ↓
-Mark ready for review
-        ↓
-Select an explicit merge strategy
-        ↓
-Integrate into main
-        ↓
-Update local main and remove obsolete branches
-```
-
-Example branch categories:
-
-```text
-docs/
-model/
-test/
-feat/
-fix/
-chore/
-research/
-```
-
-Example commit subjects:
-
-```text
-docs(model): define deterministic asset state transitions
-chore(model): establish strict TypeScript runtime
-model(amount): define integer base-unit amounts
-model(state): add immutable token state representation
-model(transition): implement ordinary transfer semantics
-test(invariants): verify balance conservation
-research(standards): normalize ERC-20 transfer requirements
-```
-
-Commit messages should explain:
-
-* what changed;
-* why it changed;
-* which assumptions were introduced;
-* which claims are supported;
-* which claims remain unsupported.
-
----
-
-## 21. Near-Term Engineering Roadmap
+## 19. Near-Term Engineering Roadmap
 
 ### Phase 1 — Executable State Core
 
-Current and planned work:
+Completed:
 
-* [x] Node.js and TypeScript project baseline;
-* [x] strict compiler configuration;
-* [x] non-negative integer Amount primitive;
-* [x] initial Amount unit and boundary tests;
-* [x] state-transition working specification;
-* [x] quantitative numeric-semantics working specification;
-* [ ] DecimalScale domain primitive;
-* [ ] explicit known-versus-unknown scale runtime representation;
-* [ ] canonical exact-decimal input grammar;
-* [ ] exact decimal-string parser;
-* [ ] exact encode and decode operations;
-* [ ] deterministic Amount serialization;
-* [ ] asset-identity representation and runtime type;
-* [ ] scale-source representation;
-* [ ] explicit conversion-error taxonomy;
-* [ ] immutable token state;
-* [ ] operation discriminated union;
-* [ ] success/failure result union;
-* [ ] pure transition function;
-* [ ] executable foundational invariants;
-* [ ] deterministic trace schema.
+* [x] Node.js and TypeScript project baseline
+* [x] strict compiler configuration
+* [x] non-negative integer `Amount` primitive
+* [x] initial `Amount` unit and boundary tests
+* [x] state-transition working specification
+* [x] quantitative numeric-semantics working specification
+
+Next:
+
+* [ ] freeze executable `DecimalScale` representation
+* [ ] define implementation-level scale bounds
+* [ ] implement `DecimalScale`
+* [ ] model known-versus-unknown scale
+* [ ] define canonical exact-decimal grammar
+* [ ] implement exact decimal-string parsing
+* [ ] implement exact encode/decode operations
+* [ ] define deterministic `Amount` serialization
+* [ ] implement asset identity
+* [ ] implement scale-source representation
+* [ ] define explicit conversion errors
+* [ ] implement immutable token state
+* [ ] define operation and result unions
+* [ ] implement pure state transitions
+* [ ] implement foundational invariants
+* [ ] define deterministic trace schema
 
 ### Phase 2 — Standard Manifests
 
-* [ ] ERC-20 manifest;
-* [ ] TRC-20 manifest;
-* [ ] BEP-20 manifest;
-* [ ] ARC-200 manifest;
-* [ ] SASP-1 experimental profile;
-* [ ] manifest schema validation.
+* [ ] ERC-20
+* [ ] TRC-20
+* [ ] BEP-20
+* [ ] ARC-200
+* [ ] SASP-1
+* [ ] manifest validation
 
 ### Phase 3 — Adversarial Semantics
 
-* [ ] false-return behavior;
-* [ ] empty-return behavior;
-* [ ] revert behavior;
-* [ ] fee-on-transfer behavior;
-* [ ] missing or inconsistent events;
-* [ ] allowance-race scenarios;
-* [ ] precision-normalization failures.
+* [ ] return and failure variants
+* [ ] fee-on-transfer behavior
+* [ ] event-state inconsistencies
+* [ ] allowance scenarios
+* [ ] precision-normalization failures
 
-### Phase 4 — Solidity Evidence Layer
+### Phase 4 — Contract Evidence Layer
 
-* [ ] minimal reference implementation;
-* [ ] deliberately non-compliant variants;
-* [ ] secured variants;
-* [ ] Foundry unit tests;
-* [ ] fuzz tests;
-* [ ] invariant tests;
-* [ ] execution-trace export.
+* [ ] minimal reference implementation
+* [ ] deliberately non-compliant variants
+* [ ] secured variants
+* [ ] unit tests
+* [ ] fuzz tests
+* [ ] invariant tests
+* [ ] execution-trace export
 
-### Phase 5 — Settlement and Cross-Chain Model
+### Phase 5 — Settlement and Cross-Domain Model
 
-* [ ] custody-ledger reconciliation;
-* [ ] pending and finalized deposit states;
-* [ ] replay protection;
-* [ ] lock/mint/burn/release accounting;
-* [ ] canonical and remote supply comparison;
-* [ ] settlement-divergence measurement.
+* [ ] custody-ledger reconciliation
+* [ ] pending and finalized settlement states
+* [ ] replay protection
+* [ ] lock/mint/burn/release accounting
+* [ ] canonical-versus-remote supply comparison
+* [ ] settlement-divergence measurement
 
 ### Phase 6 — Visual Observatory
 
-* [ ] standard comparison matrix;
-* [ ] state-transition explorer;
-* [ ] invariant-status views;
-* [ ] vulnerable-versus-secured comparisons;
-* [ ] settlement-divergence charts;
-* [ ] deterministic trace inspection.
+* [ ] comparison views
+* [ ] state-transition explorer
+* [ ] invariant-status views
+* [ ] adversarial comparison views
+* [ ] reconciliation visualizations
+* [ ] deterministic trace inspection
 
 ---
 
-## 22. Current Project Status
+## 20. Research and Engineering Principles
 
-| Component                                  | Status                                   |
-| ------------------------------------------ | ---------------------------------------- |
-| Research charter                           | Defined                                  |
-| State-transition working specification     | Published — Working Specification v0.1.1 |
-| Quantitative numeric working specification | Published — Working Specification v0.1.0 |
-| Node.js/TypeScript workspace               | Implemented                              |
-| Strict compiler baseline                   | Implemented                              |
-| Deterministic dependency lock              | Implemented                              |
-| Integer base-unit `Amount`                 | Implemented                              |
-| Amount unit and boundary tests             | Implemented                              |
-| `DecimalScale` primitive                   | Not yet implemented                      |
-| `DecimalScale` runtime representation      | Not yet frozen                           |
-| Implementation-level maximum scale         | Not yet frozen                           |
-| Known-versus-unknown scale distinction     | Specified conceptually                   |
-| Known-versus-unknown scale runtime model   | Not yet implemented                      |
-| Canonical exact-decimal grammar            | Not yet frozen                           |
-| Exact decimal-string parser                | Not yet implemented                      |
-| Decimal formatter                          | Not yet implemented                      |
-| Exact encode and decode operations         | Not yet implemented                      |
-| Scale-source classification                | Specified conceptually                   |
-| Scale-source runtime representation        | Not yet implemented                      |
-| Conversion-policy taxonomy                 | Specified conceptually                   |
-| Conversion-policy execution                | Not yet implemented                      |
-| Residual and dust representation           | Not yet frozen                           |
-| Deterministic BigInt serialization         | Not yet implemented                      |
-| Asset-identity representation              | Not yet frozen                           |
-| Asset-identity runtime model               | Not yet implemented                      |
-| Token state model                          | Not yet implemented                      |
-| Transfer operations                        | Not yet implemented                      |
-| Executable invariants                      | Not yet implemented                      |
-| Standard manifests                         | Not yet implemented                      |
-| Solidity implementations                   | Not yet implemented                      |
-| Deterministic traces                       | Not yet generated                        |
-| Visual observatory                         | Not yet implemented                      |
-| Production readiness                       | Not claimed                              |
-| Formal verification                        | Not claimed                              |
+1. Primary and normative sources take precedence over secondary summaries.
+2. Interface similarity is not treated as behavioral equivalence.
+3. Financial quantities carry explicit domain meaning.
+4. Core modeled asset accounting uses integer base units.
+5. Core accounting does not use binary floating point as the authoritative representation.
+6. Preconditions and postconditions are explicit.
+7. Frame conditions identify what may and may not change.
+8. Failure semantics are modeled explicitly.
+9. Events are evidence, not independent proof of state.
+10. Transaction execution and economic success are separate concepts.
+11. Protocol state and external ledger state are reconciled separately.
+12. Comparative experiments use equivalent explicit inputs and assumptions.
+13. Deterministic replay is versioned and reproducible.
+14. Unsupported claims and limitations remain visible.
+15. A test result is never generalized beyond its test boundary.
+16. Every material change is independently reviewable.
+17. Research conclusions remain proportional to available evidence.
 
 ---
 
-## 23. Explicit Non-Goals
+## 21. Explicit Non-Goals
 
-SPECTRA does not claim to:
+SPECTRA does not currently claim to:
 
-* introduce a production-ready token standard;
-* provide a complete audit of any asset standard;
-* prove that an implementation is vulnerability-free;
+* provide a production-ready asset standard;
+* provide a complete audit of any asset ecosystem;
+* prove vulnerability absence;
 * formally verify the complete system;
+* implement production custody infrastructure;
 * implement a production bridge;
-* replace official protocol specifications;
 * reproduce complete consensus behavior;
-* provide investment or trading advice;
-* support real customer funds;
-* provide production custody infrastructure.
-
-The project is an experimental research laboratory designed to produce
-bounded, reproducible, and reviewable technical evidence.
+* provide investment or trading functionality.
 
 ---
 
-## 24. Documentation
+## 22. Research Direction
 
-Current documentation:
+SPECTRA is ultimately investigating a single recurring question:
 
-* [Documentation Index](docs/README.md)
-* [State-Transition Working Specification](docs/state-model.md)
-* [Quantitative Numeric Semantics Working Specification](docs/numeric-semantics.md)
-* [Standard Manifest Workspace](standards/README.md)
+> **When does an abstraction stop preserving the economic and security meaning
+> of the system beneath it?**
 
-Planned documentation will be introduced only when substantive material exists:
+The repository answers that question incrementally.
 
-```text
-docs/project-charter.md
-docs/architecture.md
-docs/methodology.md
-docs/threat-model.md
-docs/invariants.md
-docs/findings.md
-docs/limitations.md
-docs/evidence-register.md
-```
+Not through interface similarity.
 
----
+Not through unsupported compatibility labels.
 
-## 25. Author
-
-**Valerius VARDA**
-
-Research and engineering interests:
-
-* blockchain protocol engineering;
-* protocol security;
-* financial infrastructure;
-* deterministic systems;
-* quantitative risk;
-* adversarial testing;
-* cross-chain accounting;
-* secure asset semantics;
-* low-level and high-performance systems.
-
-SPECTRA is developed as an independent portfolio research project focused on
-transparent assumptions, reproducible evidence, and technically defensible
-claims.
+Through explicit assumptions, mathematical models, executable behavior,
+deterministic experiments, invariants, reconciliation, and bounded evidence.
