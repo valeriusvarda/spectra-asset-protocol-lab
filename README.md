@@ -2,9 +2,7 @@
 
 ## Cross-Standard Asset Protocol Security Observatory
 
-> An executable, evidence-driven research laboratory for studying where
-> apparently compatible asset systems diverge in execution, authorization,
-> numeric interpretation, accounting, and settlement semantics.
+> **An executable, evidence-driven research laboratory for determining where apparently compatible asset systems cease to preserve the same execution, authorization, numeric, accounting, and settlement semantics.**
 
 | Field                  | Current State                                                                  |
 | ---------------------- | ------------------------------------------------------------------------------ |
@@ -17,18 +15,16 @@
 | Working specifications | State Model v0.1.1; Quantitative Numeric Semantics v0.1.0                      |
 | Executable tests       | 8                                                                              |
 | Status                 | Experimental and under active development                                      |
-| Production readiness   | Not claimed                                                                    |
-| Formal verification    | Not claimed                                                                    |
+| Production readiness   | **Not claimed**                                                                |
+| Formal verification    | **Not claimed**                                                                |
 
 ---
 
 ## 1. The Problem
 
-Modern asset infrastructure frequently places heterogeneous blockchain assets
-behind common application-level abstractions.
+Modern asset infrastructure routinely places heterogeneous blockchain assets behind common application-level abstractions.
 
-A wallet, exchange, custodian, bridge, payment system, accounting engine, or
-protocol adapter may encounter assets exposing familiar operations such as:
+Wallets, exchanges, custodians, bridges, payment systems, accounting engines, and protocol adapters may interact with assets through familiar operations such as:
 
 ```text
 transfer
@@ -38,130 +34,165 @@ balanceOf
 totalSupply
 ```
 
-Interface similarity, however, does not establish behavioral equivalence.
+A familiar interface establishes syntactic similarity.
 
-Two implementations that appear compatible at the interface boundary may differ
-in:
+It does **not** establish semantic equivalence.
 
-* return-value behavior;
-* failure signaling;
+Two systems that appear compatible at the interface boundary may differ materially in:
+
+* execution and failure behavior;
 * authorization semantics;
-* realized transfer amounts;
-* event-state consistency;
-* decimal and precision interpretation;
+* realized debit and credit amounts;
+* event/state relationships;
+* numeric representation;
+* decimal interpretation;
 * supply controls;
 * privileged operations;
-* execution-environment assumptions;
-* bridge accounting;
-* custody-ledger treatment;
-* settlement assumptions.
+* accounting treatment;
+* settlement conditions;
+* cross-domain state relationships.
 
-SPECTRA studies the consequences of treating those differences as if they did
-not exist.
+SPECTRA investigates the consequences of treating those differences as if they did not exist.
 
 The central systems problem is:
 
-> **A higher-level integration may make an economic or security decision using
-> evidence whose underlying semantics were not preserved across system
-> boundaries.**
+> **A higher-level integration may make an economic or security decision using evidence whose underlying meaning was not preserved across system boundaries.**
 
-The research surface therefore extends across:
-
-```text
-specification
-    ↓
-implementation
-    ↓
-execution
-    ↓
-observation
-    ↓
-integration
-    ↓
-accounting
-    ↓
-settlement
-```
-
-and, where relevant:
-
-```text
-canonical state
-    ↓
-cross-domain mechanism
-    ↓
-remote state
-```
-
-A mismatch introduced at one boundary may invalidate assumptions made at a
-later boundary.
+The project therefore treats compatibility as a hypothesis requiring evidence, not as a conclusion inherited from interface shape.
 
 ---
 
 ## 2. Research Thesis
 
-SPECTRA begins with a falsifiable thesis:
+SPECTRA begins from the following falsifiable thesis:
 
-> Interface-level compatibility is insufficient evidence of behavioral,
-> accounting, or settlement equivalence when execution, failure,
-> authorization, numeric, event, supply, and cross-domain semantics have not
-> been evaluated independently.
+> **Interface-level compatibility is insufficient evidence of behavioral, accounting, or settlement equivalence when execution, failure, authorization, numeric, event, supply, and cross-domain semantics have not been evaluated independently.**
 
-The thesis predicts that systems exposing sufficiently similar interfaces can
-still produce materially different outcomes under the same explicit integration
-assumptions.
+The thesis predicts that independently implemented systems exposing sufficiently similar interfaces may produce materially different results under the same explicit integration assumptions.
 
-This is not treated as a predetermined conclusion.
-
-Evidence may strengthen the thesis when apparently compatible systems produce
-different:
+Evidence may strengthen the thesis when controlled experiments reproduce divergence in dimensions such as:
 
 * state transitions;
 * authorization outcomes;
 * return or failure behavior;
 * realized transfer amounts;
-* event-state relationships;
-* numeric interpretations;
+* event/state relationships;
+* numeric interpretation;
 * supply relationships;
-* reconciliation results.
+* reconciliation;
+* settlement state.
 
-Evidence may weaken the thesis when independently implemented systems remain
-equivalent across the tested semantic dimensions under the same explicit
-assumptions.
+Evidence may weaken the thesis when independent implementations remain equivalent across the tested semantic dimensions under equivalent:
+
+* initial states;
+* ordered inputs;
+* environmental assumptions;
+* observation rules;
+* comparison criteria.
 
 Inconclusive experiments remain inconclusive.
 
-They are not converted into supporting evidence.
+They are not converted into favorable evidence.
 
 ---
 
 ## 3. Primary Research Question
 
-> Can heterogeneous fungible-asset behavior be represented under a shared,
-> executable analytical model strongly enough to identify where interface
-> similarity fails to preserve behavioral, accounting, or settlement
-> assumptions?
+> **Can heterogeneous fungible-asset behavior be represented by a shared executable semantic model strongly enough to identify where interface similarity fails to preserve behavioral, accounting, or settlement assumptions?**
 
-This question produces a set of narrower research problems:
+This produces narrower research questions:
 
-1. Which behaviors are explicitly required by each reviewed standard?
-2. Which behaviors are optional, implementation-defined, or unspecified?
-3. Can interface compatibility be separated from behavioral compatibility?
-4. Can relevant asset behavior be modeled as deterministic state transitions?
-5. Which invariants remain meaningful across multiple implementations?
-6. When can requested transfer value differ from realized transfer value?
-7. When can event observations disagree with realized state?
-8. When can decimal or unit interpretation change the represented economic quantity?
-9. When can protocol state and external accounting state diverge?
-10. Under which modeled conditions can canonical and remote supply relationships fail?
-11. What evidence is sufficient to support a bounded conformance statement?
-12. What evidence is sufficient to support a bounded security finding?
-13. Can reference and adversarial implementations be compared under identical ordered inputs?
-14. Can modeled reconciliation and settlement divergence be reproduced deterministically?
+1. Which behaviors are normatively required by each reviewed standard?
+2. Which behaviors are optional, permitted, implementation-defined, or unspecified?
+3. Where does syntactic compatibility cease to imply behavioral compatibility?
+4. Which behaviors can be represented as deterministic state transitions?
+5. Which invariants remain meaningful across heterogeneous implementations?
+6. When can requested transfer value differ from realized debit or credit?
+7. When can observed events fail to establish realized state?
+8. When can scale or unit interpretation change the represented economic quantity?
+9. When can authorization assumptions diverge from actual execution semantics?
+10. When can protocol state and external accounting state diverge?
+11. Under which explicit conditions can canonical and remote supply relationships fail?
+12. What evidence is sufficient for a bounded conformance statement?
+13. What evidence is sufficient for a bounded security-relevant finding?
+14. Can reference and adversarial implementations be evaluated under identical ordered inputs?
+15. Can reconciliation and settlement divergence be reproduced deterministically?
 
 ---
 
-## 4. Failure Model
+## 4. Research Objectives
+
+The initial research program has six objectives.
+
+### 4.1 Normalize Semantics
+
+Extract source-backed requirements from heterogeneous asset standards without assuming that similar interfaces imply equivalent behavior.
+
+### 4.2 Build a Shared State Model
+
+Represent security- and accounting-relevant asset behavior using explicit state, transitions, preconditions, postconditions, and frame conditions.
+
+### 4.3 Make Numeric Meaning Explicit
+
+Separate raw integer quantities from decimal scale, asset identity, scale source, and conversion policy so that economic interpretation is never inferred from an untyped number alone.
+
+### 4.4 Reproduce Divergence
+
+Construct controlled reference and adversarial scenarios capable of reproducing semantic differences under equivalent explicit inputs and assumptions.
+
+### 4.5 Evaluate Invariants
+
+Determine which supply, balance, authorization, event, replay, accounting, and settlement relationships can be expressed and tested as executable invariants.
+
+### 4.6 Produce Bounded Evidence
+
+Generate deterministic traces and evidence records that explain:
+
+```text
+where systems agree
+where they diverge
+why they diverge
+which assumption failed
+which requirement or invariant was affected
+what evidence supports the conclusion
+what remains unresolved
+```
+
+---
+
+## 5. The Semantic Boundary Problem
+
+SPECTRA models integration as a sequence of semantic boundaries:
+
+```text
+Specification
+      ↓
+Implementation
+      ↓
+Execution
+      ↓
+Observation
+      ↓
+Integration
+      ↓
+Accounting
+      ↓
+Settlement
+```
+
+For cross-domain systems:
+
+```text
+Canonical State
+      ↓
+Cross-Domain Mechanism
+      ↓
+Message / State Transition
+      ↓
+Remote State
+```
+
+An assumption introduced at one boundary may become an unverified premise at the next.
 
 A representative failure chain is:
 
@@ -170,16 +201,97 @@ Interface Similarity
         ↓
 Integration Assumption
         ↓
-Hidden Semantic Difference
+Unverified Semantic Equivalence
         ↓
-Incorrect State Interpretation
+Incorrect Interpretation
         ↓
-Accounting or Authorization Divergence
+State / Authorization / Numeric Divergence
         ↓
-Reconciliation Failure
+Accounting or Reconciliation Error
         ↓
-Security or Financial Loss Condition
+Potential Security or Financial Consequence
 ```
+
+SPECTRA therefore seeks to identify the **earliest observable point at which semantic preservation fails**, rather than reporting only the final downstream discrepancy.
+
+A reconciliation failure may originate in a scale error.
+
+An accounting mismatch may originate in an assumption that requested amount equals realized amount.
+
+A cross-domain supply discrepancy may originate in replay or message-processing semantics.
+
+The visible failure and the originating semantic failure are not necessarily the same event.
+
+---
+
+## 6. Semantic Dimensions
+
+SPECTRA separates asset behavior into explicit analytical dimensions.
+
+### Execution
+
+* success and failure behavior;
+* return-value semantics;
+* execution-status interpretation;
+* resulting state transitions.
+
+### Authorization
+
+* caller requirements;
+* ownership assumptions;
+* allowance behavior;
+* privileged operations;
+* control boundaries.
+
+### Transfer
+
+* requested amount;
+* debited amount;
+* credited amount;
+* realized transfer;
+* conservation relationships.
+
+### Observation
+
+* event emission;
+* event contents;
+* event/state consistency;
+* sufficiency of observed evidence.
+
+### Numeric
+
+* integer base units;
+* decimal scale;
+* exact representation;
+* encoding and decoding;
+* scale mismatch;
+* conversion policy;
+* residual and dust behavior.
+
+### Supply
+
+* minting and burning;
+* total-supply transitions;
+* canonical supply;
+* remote supply;
+* cross-domain conservation relationships.
+
+### Accounting and Settlement
+
+* protocol state;
+* observed state;
+* external accounting state;
+* pending settlement;
+* finalized settlement;
+* reconciliation conditions.
+
+A system may preserve one dimension while violating another.
+
+SPECTRA does not collapse them into a single compatibility label.
+
+---
+
+## 7. A Representative Divergence
 
 Consider an integration requesting:
 
@@ -187,143 +299,64 @@ Consider an integration requesting:
 1,000,000 base units
 ```
 
-and observing a transaction that completed without reverting.
+and observing a transaction that completed successfully.
 
 That observation alone does not establish that:
 
 ```text
 recipient balance increased by exactly 1,000,000
 sender balance decreased by exactly 1,000,000
+requested amount equals realized amount
 observed events describe the realized state transition
 the correct decimal scale was applied
 an external ledger recorded the correct economic quantity
-the assumed settlement condition was reached
+the required settlement condition was reached
 ```
 
-SPECTRA therefore separates:
+SPECTRA therefore distinguishes:
 
 ```text
 requested behavior
+executed behavior
 observed behavior
 realized state transition
 recorded accounting effect
 settled economic effect
 ```
 
-These observations and effects may align.
+Where equality is required, equality becomes an explicit property or invariant.
 
-Their equivalence must be established rather than assumed.
-
----
-
-## 5. Representative Divergence Classes
-
-### Return and Failure Semantics
-
-An integration may interpret successful transaction execution as successful
-asset transfer even when the asset-level result expresses different semantics.
-
-SPECTRA treats transaction execution status and modeled economic success as
-separate observations.
-
-### Realized Transfer Amount
-
-A requested amount and a realized balance change need not be assumed equal.
-
-Transfer mechanics may require the integration to distinguish:
-
-```text
-requested amount
-debited amount
-credited amount
-```
-
-rather than collapsing them into one value.
-
-### Event–State Consistency
-
-Events can serve as integration evidence, but event interpretation must remain
-consistent with the modeled resulting state.
-
-SPECTRA does not treat event observation as independent proof of state.
-
-### Numeric and Scale Interpretation
-
-The same raw integer can represent different human-readable quantities under
-different decimal scales.
-
-For example:
-
-```text
-raw amount = 1,000,000
-scale      = 6
-```
-
-represents:
-
-```text
-1
-```
-
-The interpretation of scale is therefore part of the accounting model.
-
-### Authorization Semantics
-
-Similar transfer and approval interfaces do not establish identical
-authorization behavior.
-
-Authorization requirements must be modeled explicitly rather than inferred from
-interface shape.
-
-### Accounting and Settlement
-
-An external ledger may record value before the underlying system reaches the
-settlement condition assumed by the integration.
-
-Protocol state, observed state, accounting state, and settlement state are
-therefore modeled as distinct analytical layers.
-
-### Cross-Domain Supply Relationships
-
-Cross-domain mechanisms may create relationships among values such as:
-
-```text
-canonical locked supply
-burned supply
-remote minted supply
-released supply
-processed messages
-```
-
-SPECTRA will test explicitly defined relationships among these values rather
-than assuming conservation from interface behavior alone.
+Where equality is not required, the relationship must be represented explicitly.
 
 ---
 
-## 6. Research Method
+## 8. Research Method
 
-SPECTRA converts protocol statements and observed behavior into increasingly
-strong evidence artifacts.
+SPECTRA converts protocol statements and observed behavior into progressively stronger research artifacts.
 
 ```text
-Official Requirement
-        ↓
+Official / Normative Source
+            ↓
 Normalized Requirement
-        ↓
+            ↓
 Mathematical State Model
-        ↓
+            ↓
 Executable Domain Model
-        ↓
-Reference or Adversarial Implementation
-        ↓
-Executable Test or Scenario
-        ↓
-Deterministic Trace
-        ↓
-Invariant or Conformance Evaluation
-        ↓
+            ↓
+Reference / Adversarial Implementation
+            ↓
+Deterministic Scenario
+            ↓
+Execution Trace
+            ↓
+Requirement / Invariant Evaluation
+            ↓
 Evidence Record
-        ↓
+            ↓
+Differential Analysis
+            ↓
+Bounded Assessment
+            ↓
 Trace-Driven Visualization
 ```
 
@@ -331,192 +364,180 @@ Each stage has a different evidentiary meaning.
 
 Documentation is not executable evidence.
 
-A passing test is not a security proof.
-
 A model is not automatically a protocol implementation.
 
-A protocol implementation is not automatically a representation of a
-production integration environment.
+A passing test is not a security proof.
+
+An implementation is not automatically representative of a production integration environment.
+
+A visualization is not evidence merely because it is persuasive.
 
 SPECTRA keeps these boundaries explicit.
 
 ---
 
-## 7. Evidence Policy
+## 9. Differential Research
 
-Material claims are classified using the following evidence categories.
+Controlled comparison is preferred over anecdotal observation.
+
+A comparative experiment should hold constant, where applicable:
+
+```text
+initial state
+ordered inputs
+asset identity
+numeric interpretation
+environmental assumptions
+observation rules
+comparison criteria
+```
+
+while varying the semantic implementation being examined.
+
+Conceptually:
+
+```text
+                  Same Initial State
+                         │
+                  Same Ordered Inputs
+                         │
+            ┌────────────┴────────────┐
+            ▼                         ▼
+     Reference Model            Variant Model
+            │                         │
+            ▼                         ▼
+        Trace A                   Trace B
+            │                         │
+            └────────────┬────────────┘
+                         ▼
+                Differential Analysis
+                         ↓
+             Requirement / Invariant
+                    Evaluation
+```
+
+The desired research result is not simply:
+
+> Implementation A behaved differently.
+
+A stronger result is:
+
+> **Under identical explicit assumptions and ordered inputs, implementation A and implementation B produced distinguishable traces. The first relevant divergence occurred at semantic dimension X, affected requirement or invariant Y, and was reproduced under environment Z.**
+
+That is a reviewable research artifact.
+
+---
+
+## 10. Evidence Policy
+
+Material claims are classified using the current project evidence taxonomy.
 
 ### `SPECIFIED`
 
-A reviewed normative source explicitly requires, recommends, permits, or
-prohibits the behavior.
+A reviewed normative source explicitly requires, permits, recommends, or prohibits the behavior.
 
 ### `INFERRED`
 
-The conclusion is derived from reviewed primary sources but is not expressed as
-a direct normative requirement.
+A conclusion follows from reviewed primary evidence but is not expressed directly as a normative requirement.
 
 ### `UNSPECIFIED`
 
-The reviewed source does not define the behavior precisely enough to support a
-conformance decision.
+The reviewed source does not define the behavior precisely enough to support a conformance determination.
 
 ### `EXPERIMENTALLY_OBSERVED`
 
-The behavior was reproduced by a documented implementation, test, or scenario
-under a defined environment.
+The behavior was reproduced under a documented implementation, environment, test, or scenario.
 
 ### `PROJECT_DEFINED`
 
-The behavior, invariant, model, or profile belongs to SPECTRA rather than an
-external standard.
+The model, invariant, taxonomy, profile, or behavior is defined by SPECTRA itself.
 
 A claim must not silently move from one evidence class to another.
 
----
+Deterministic calculations or consequences may be recorded as derived analytical results, but `DERIVED` is not currently introduced as an additional canonical evidence class.
 
-## 8. Research Success Criterion
-
-SPECTRA is not designed to produce statements such as:
+The distinction is deliberate.
 
 ```text
-Standard A and Standard B are compatible.
+specification
+    ≠
+model
+    ≠
+implementation
+    ≠
+test
+    ≠
+observation
+    ≠
+finding
+    ≠
+security proof
 ```
 
-The intended output is more constrained.
+---
 
-A useful result has the form:
+## 11. Evidence Discipline
+
+A material conclusion should answer:
+
+1. **What was observed?**
+2. **Under which explicit conditions?**
+3. **What follows directly from the evidence?**
+4. **What is the narrowest defensible interpretation?**
+5. **What remains unresolved?**
+
+The preferred analytical structure is:
 
 ```text
 Given:
+    initial state S
+    ordered input I
+    implementation or manifest M
+    explicit assumptions A
 
-initial state S,
-ordered input I,
-implementation or manifest M,
-explicit assumptions A,
+Observed:
+    trace T
 
-the system produced:
+Derived:
+    transition S → S'
 
-transition S → S'
+Evaluated:
+    requirement R
+    invariant V
 
-which satisfied or violated:
+Assessment:
+    bounded conclusion C
 
-requirement R
-invariant V
-
-with evidence E.
+Unresolved:
+    evidence gaps G
 ```
 
-The strongest intended result is therefore a reproducible explanation of:
+The purpose is not to maximize the strength of a conclusion.
 
-```text
-where systems agree
-where they diverge
-why they diverge
-which assumptions are required
-which invariant or requirement is affected
-what evidence supports the conclusion
-what remains unresolved
-```
+It is to keep the strength of the conclusion proportional to the evidence supporting it.
 
 ---
 
-## 9. Current Evidence Boundary
+## 12. State and Numeric Foundations
 
-The repository currently contains three maturity layers.
+SPECTRA represents modeled behavior as transitions over explicit state.
 
-### Implemented and Executable
+Conceptually:
 
-```text
-strict TypeScript runtime
-integer base-unit Amount primitive
-runtime Amount validation
-canonical zero representation
-exact integer addition
-preconditioned subtraction
-eight executable Amount tests
-GitHub Actions validation workflow
+```math
+S_{t+1} = F(S_t, I_t, E_t)
 ```
 
-These claims apply only within the current implementation, runtime, repository,
-and test boundaries.
+where:
 
-### Specified and Reviewable, but Not Executable
+* (S_t) is current modeled state;
+* (I_t) is an ordered input;
+* (E_t) represents relevant execution or environmental conditions;
+* (F) is the modeled transition function.
 
-```text
-Amount and DecimalScale mathematical domains
-decimal scale-factor relationship
-exact encoding and decoding relationships
-exact-representability preconditions
-round-trip properties
-known-versus-unknown scale distinction
-scale-source classification
-scale-mismatch analysis
-conversion-policy taxonomy
-numeric failure modes
-future implementation requirements
-test obligations
-evidence boundaries
-```
+The current executable numeric foundation begins with `Amount`.
 
-These behaviors are described in the quantitative numeric working
-specification.
-
-They do not establish corresponding executable implementations.
-
-### Planned or Design-Unresolved
-
-```text
-DecimalScale runtime representation
-implementation-level maximum scale
-known-versus-unknown scale runtime type
-canonical exact-decimal grammar
-decimal parser and formatter
-asset identity
-scale-source runtime representation
-conversion error model
-residual and dust representation
-cross-scale reconciliation
-protocol adapters
-```
-
-A documented behavior is not described as executable until implementation and
-test evidence exist.
-
-An unresolved design question is not described as a completed specification.
-
-An implemented behavior is not generalized beyond its explicit evidence
-boundary.
-
----
-
-## 10. Current Executable Foundation
-
-### Runtime
-
-```text
-Node.js:       >=24 <25
-TypeScript:    7.0.2
-Modules:       ECMAScript Modules
-Resolution:    NodeNext
-Test runner:   node:test
-Package:       npm
-```
-
-The compiler baseline includes strict TypeScript checks.
-
-Those checks improve model discipline but do not replace runtime validation,
-testing, threat modeling, or formal reasoning.
-
-### `Amount`
-
-The first executable financial-domain primitive is:
-
-```text
-model/amount.ts
-```
-
-It models a non-negative integer base-unit quantity.
+Its mathematical domain is:
 
 ```math
 \mathbb{A}
@@ -528,8 +549,9 @@ x \geq 0
 \right\}
 ```
 
-The implementation uses `bigint` so that core modeled asset quantities are not
-stored using binary floating-point approximation.
+`Amount` represents a non-negative integer quantity expressed in base units.
+
+The implementation uses `bigint` so that core modeled asset quantities are not represented using binary floating-point approximation.
 
 The current primitive supports:
 
@@ -537,45 +559,24 @@ The current primitive supports:
 construction
 runtime validation
 canonical zero
-exact addition
+exact integer addition
 preconditioned subtraction
 ```
 
-It does not yet provide:
+It does not yet implement:
 
 ```text
+DecimalScale
 decimal parsing
 decimal formatting
-DecimalScale
 asset identity
-rounding policy
+conversion policy
 protocol-specific numeric limits
 ```
 
----
+### Decimal Scale
 
-## 11. Quantitative Numeric Semantics
-
-The numeric working specification separates:
-
-```text
-integer base-unit Amount
-DecimalScale
-human-readable interpretation
-asset identity
-scale source
-exact conversion
-conversion policy
-protocol-specific representation
-```
-
-For decimal scale:
-
-```math
-d \in \mathbb{D}
-```
-
-where:
+The shared mathematical decimal-scale domain is:
 
 ```math
 \mathbb{D}
@@ -587,7 +588,7 @@ d \geq 0
 \right\}
 ```
 
-The scale factor is:
+with scale factor:
 
 ```math
 P(d) = 10^d
@@ -615,51 +616,76 @@ h \times 10^d \geq 0
 
 These relationships are specified.
 
-`DecimalScale`, parsing, formatting, and encode/decode APIs are not yet
-implemented.
-
-See:
-
-* [Quantitative Numeric Semantics](docs/numeric-semantics.md)
+They are not yet complete executable conversion APIs.
 
 ---
 
-## 12. Working Specifications
+## 13. Current Evidence Boundary
 
-### State Model
+The repository currently contains three maturity layers.
 
-[State Model](docs/state-model.md)
-
-Current classification:
+### Layer I — Implemented and Executable
 
 ```text
-Working Specification v0.1.1
+strict TypeScript runtime
+integer base-unit Amount primitive
+runtime Amount validation
+canonical zero representation
+exact integer addition
+preconditioned subtraction
+eight executable Amount tests
+GitHub Actions validation
 ```
 
-It defines the current mathematical and transition-model foundation.
+These claims apply only within the current implementation and test boundary.
 
-### Quantitative Numeric Semantics
-
-[Quantitative Numeric Semantics](docs/numeric-semantics.md)
-
-Current classification:
+### Layer II — Specified and Reviewable
 
 ```text
-Working Specification v0.1.0
+Amount and DecimalScale mathematical domains
+scale-factor relationship
+exact encoding and decoding relationships
+exact-representability preconditions
+round-trip properties
+known-versus-unknown scale distinction
+scale-source classification
+scale-mismatch analysis
+conversion-policy taxonomy
+numeric failure modes
+implementation requirements
+test obligations
+evidence boundaries
 ```
 
-It defines the current Amount, scale, exactness, conversion-policy, and numeric
-evidence boundaries.
+These are specification-level artifacts.
 
-### Documentation Index
+They are not described as executable until corresponding implementation and test evidence exist.
 
-[Documentation Index](docs/README.md)
+### Layer III — Planned or Design-Unresolved
+
+```text
+DecimalScale runtime representation
+implementation-level maximum scale
+known-versus-unknown scale runtime model
+canonical exact-decimal grammar
+decimal parser and formatter
+asset identity
+scale-source runtime representation
+conversion error model
+residual and dust representation
+cross-scale reconciliation
+protocol adapters
+```
+
+An unresolved design question remains unresolved.
+
+A roadmap entry is not evidence of implementation.
 
 ---
 
-## 13. Comparative Research Scope
+## 14. Comparative Research Scope
 
-The planned comparative program begins with four asset-standard families:
+The initial comparative program targets:
 
 ```text
 ERC-20
@@ -668,60 +694,81 @@ BEP-20
 ARC-200
 ```
 
-The purpose is not to assume that these systems are equivalent.
+The purpose is not to declare these standards equivalent or incompatible in advance.
 
-The purpose is to extract source-backed requirements and identify where
-apparently similar abstractions preserve or fail to preserve modeled semantics.
+The program seeks to determine:
 
-Machine-readable standard manifests are planned work and are not yet
-implemented.
+```text
+where semantics coincide
+where semantics diverge
+where behavior is underspecified
+where implementations diverge from integration assumptions
+which differences become security or accounting relevant
+```
 
----
+Machine-readable standard manifests are planned research infrastructure and are not yet represented as completed artifacts.
 
-## 14. SASP-1
+### SASP-1
 
-### Secure Asset Semantics Profile — Experimental Research Construct
+SASP-1 — Secure Asset Semantics Profile — is a project-defined experimental research construct intended to represent security-relevant asset semantics in deterministic, machine-readable form.
 
-SASP-1 is a project-defined experimental profile intended to express
-security-relevant asset behavior in a deterministic and machine-readable form.
-
-Planned categories include:
-
-* interface requirements;
-* return and failure semantics;
-* authorization rules;
-* event requirements;
-* balance transitions;
-* allowance transitions;
-* supply controls;
-* privilege extensions;
-* decimal behavior;
-* integration assumptions;
-* tested invariants;
-* known limitations.
-
-SASP-1 is not:
+It is not:
 
 * an official blockchain standard;
-* an accepted industry proposal;
-* a production-ready token specification;
+* an accepted industry specification;
+* a production asset standard;
 * a replacement for existing standards;
 * evidence that an implementation is secure.
 
-The SASP-1 manifest remains planned work.
+Its purpose is controlled semantic comparison.
 
 ---
 
-## 15. System Architecture
+## 15. Invariant Program
+
+The initial research program identifies the following invariant families:
+
+1. supply conservation;
+2. balance conservation under explicitly defined transfer semantics;
+3. authorization integrity;
+4. allowance safety;
+5. event/state consistency;
+6. replay uniqueness;
+7. settlement consistency;
+8. deterministic replay.
+
+These are research targets.
+
+An invariant becomes executable evidence only when its:
+
+```text
+explicit definition
+        +
+model boundary
+        +
+executable implementation
+        +
+valid input domain
+        +
+test or scenario coverage
+        +
+reproducible result
+```
+
+are present.
+
+---
+
+## 16. System Architecture
 
 ```mermaid
 flowchart LR
-    A[Official Specifications] --> B[Normalized Requirements]
+    A[Normative Sources] --> B[Normalized Requirements]
     B --> C[Standard Manifests]
 
     C --> D[Shared State and Numeric Model]
-
     D --> E[Deterministic TypeScript Model]
+
     C --> F[Reference and Adversarial Implementations]
 
     E --> G[Scenario Runner]
@@ -730,40 +777,20 @@ flowchart LR
     G --> I[Deterministic Traces]
     H --> I
 
-    I --> J[Conformance Evaluation]
+    I --> J[Requirement Evaluation]
     I --> K[Invariant Evaluation]
 
     J --> L[Evidence Records]
     K --> L
 
-    L --> M[Trace-Driven Visualizations]
+    L --> M[Differential Analysis]
+    M --> N[Bounded Findings]
+    N --> O[Trace-Driven Visualizations]
 ```
 
 ### Architecture Principle
 
-No visualization, compatibility statement, finding, or security claim should
-exist independently from the evidence supporting it.
-
----
-
-## 16. Planned Invariant Program
-
-The initial research program currently identifies the following invariant
-families:
-
-1. supply conservation;
-2. balance conservation under explicitly defined transfer semantics;
-3. authorization integrity;
-4. allowance safety;
-5. event–state consistency;
-6. replay uniqueness;
-7. settlement consistency;
-8. deterministic replay.
-
-These are research targets.
-
-They must not be described as executable invariants until corresponding model,
-implementation, and test evidence exist.
+No visualization, compatibility statement, finding, or security claim should exist independently from the evidence supporting it.
 
 ---
 
@@ -793,10 +820,7 @@ spectra-asset-protocol-lab/
 └── README.md
 ```
 
-Directories are added only when they contain substantive and reviewable
-artifacts.
-
-Planned areas include:
+Planned research surfaces include:
 
 ```text
 contracts/
@@ -805,17 +829,21 @@ scripts/
 frontend/
 ```
 
+Directories are introduced only when they contain substantive and reviewable artifacts.
+
+Structure is not treated as evidence of capability.
+
 ---
 
 ## 18. Validation
 
-Install the repository runtime:
+Select the repository runtime:
 
 ```bash
 nvm use
 ```
 
-Install the exact dependency graph:
+Install the committed dependency graph:
 
 ```bash
 npm ci
@@ -827,7 +855,7 @@ Run the complete current validation boundary:
 npm run check
 ```
 
-The command currently covers:
+The validation pipeline currently covers:
 
 ```text
 TypeScript type checking
@@ -839,16 +867,24 @@ JavaScript emission
 Node.js test execution
 ```
 
-A successful validation run supports only the behavior directly covered by the
-current implementation and tests.
+A successful validation run establishes only that the current implementation passes the current validation boundary.
 
-It does not establish complete correctness or system security.
+It does not establish:
+
+```text
+complete correctness
+complete protocol conformance
+security
+economic safety
+production readiness
+formal verification
+```
 
 ---
 
-## 19. Near-Term Engineering Roadmap
+## 19. Near-Term Research and Engineering Roadmap
 
-### Phase 1 — Executable State Core
+### Phase I — Executable State Core
 
 Completed:
 
@@ -866,7 +902,7 @@ Next:
 * [ ] implement `DecimalScale`
 * [ ] model known-versus-unknown scale
 * [ ] define canonical exact-decimal grammar
-* [ ] implement exact decimal-string parsing
+* [ ] implement exact decimal parsing
 * [ ] implement exact encode/decode operations
 * [ ] define deterministic `Amount` serialization
 * [ ] implement asset identity
@@ -878,7 +914,7 @@ Next:
 * [ ] implement foundational invariants
 * [ ] define deterministic trace schema
 
-### Phase 2 — Standard Manifests
+### Phase II — Standard Manifests
 
 * [ ] ERC-20
 * [ ] TRC-20
@@ -887,63 +923,69 @@ Next:
 * [ ] SASP-1
 * [ ] manifest validation
 
-### Phase 3 — Adversarial Semantics
+### Phase III — Adversarial Semantics
 
-* [ ] return and failure variants
+* [ ] return and failure divergence
 * [ ] fee-on-transfer behavior
-* [ ] event-state inconsistencies
-* [ ] allowance scenarios
-* [ ] precision-normalization failures
+* [ ] event/state inconsistencies
+* [ ] allowance edge cases
+* [ ] precision normalization
+* [ ] scale mismatch
+* [ ] authorization divergence
 
-### Phase 4 — Contract Evidence Layer
+### Phase IV — Contract Evidence Layer
 
-* [ ] minimal reference implementation
-* [ ] deliberately non-compliant variants
+* [ ] minimal reference implementations
+* [ ] deliberately non-conforming variants
 * [ ] secured variants
 * [ ] unit tests
 * [ ] fuzz tests
 * [ ] invariant tests
 * [ ] execution-trace export
+* [ ] differential comparison
 
-### Phase 5 — Settlement and Cross-Domain Model
+### Phase V — Accounting and Settlement
 
 * [ ] custody-ledger reconciliation
 * [ ] pending and finalized settlement states
 * [ ] replay protection
 * [ ] lock/mint/burn/release accounting
-* [ ] canonical-versus-remote supply comparison
+* [ ] canonical-versus-remote supply relationships
 * [ ] settlement-divergence measurement
 
-### Phase 6 — Visual Observatory
+### Phase VI — Visual Observatory
 
-* [ ] comparison views
+* [ ] standard comparison views
 * [ ] state-transition explorer
 * [ ] invariant-status views
 * [ ] adversarial comparison views
 * [ ] reconciliation visualizations
 * [ ] deterministic trace inspection
+* [ ] evidence provenance
+
+Visualization remains downstream of the evidence model.
 
 ---
 
 ## 20. Research and Engineering Principles
 
-1. Primary and normative sources take precedence over secondary summaries.
-2. Interface similarity is not treated as behavioral equivalence.
-3. Financial quantities carry explicit domain meaning.
-4. Core modeled asset accounting uses integer base units.
-5. Core accounting does not use binary floating point as the authoritative representation.
-6. Preconditions and postconditions are explicit.
-7. Frame conditions identify what may and may not change.
-8. Failure semantics are modeled explicitly.
-9. Events are evidence, not independent proof of state.
-10. Transaction execution and economic success are separate concepts.
-11. Protocol state and external ledger state are reconciled separately.
-12. Comparative experiments use equivalent explicit inputs and assumptions.
-13. Deterministic replay is versioned and reproducible.
-14. Unsupported claims and limitations remain visible.
-15. A test result is never generalized beyond its test boundary.
-16. Every material change is independently reviewable.
-17. Research conclusions remain proportional to available evidence.
+1. **Evidence before narrative.** Claims begin with observable or explicitly sourced evidence.
+2. **Semantics before interfaces.** Interface similarity is an analytical starting point, not proof of equivalence.
+3. **Financial domains remain explicit.** Quantity, scale, identity, and interpretation are separate concerns.
+4. **Exact arithmetic at the core.** Binary floating point is not authoritative for core modeled asset quantities.
+5. **Preconditions are part of behavior.**
+6. **Postconditions must be observable.**
+7. **Frame conditions define what must remain unchanged.**
+8. **Failure behavior is protocol data.**
+9. **Events are evidence, not independent proof of state.**
+10. **Execution is not settlement.**
+11. **Protocol state and external accounting state require explicit reconciliation.**
+12. **Comparative experiments control assumptions wherever possible.**
+13. **Determinism is a research property.**
+14. **Claims remain bounded by their evidence.**
+15. **Unknown behavior remains unknown until evidence resolves it.**
+16. **Negative results are valid research results.**
+17. **Material research artifacts remain independently reviewable.**
 
 ---
 
@@ -958,22 +1000,102 @@ SPECTRA does not currently claim to:
 * implement production custody infrastructure;
 * implement a production bridge;
 * reproduce complete consensus behavior;
-* provide investment or trading functionality.
+* establish production risk directly from simplified model behavior;
+* provide trading or investment functionality.
+
+These boundaries are part of the research design.
 
 ---
 
-## 22. Research Direction
+## 22. What Constitutes a Strong Result?
 
-SPECTRA is ultimately investigating a single recurring question:
+A strong SPECTRA result should resemble:
 
-> **When does an abstraction stop preserving the economic and security meaning
-> of the system beneath it?**
+> Under initial state **S**, ordered input sequence **I**, implementation or manifest **M**, and explicitly declared assumptions **A**, the system produced trace **T**. The resulting transition **S → S'** satisfied or violated requirement **R** and invariant **V**. The relevant divergence was localized to semantic dimension **X** and reproduced under the documented environment. The evidence therefore supports bounded conclusion **C**. Generalization beyond the tested implementation and assumptions remains unsupported.
 
-The repository answers that question incrementally.
+This is intentionally narrower than:
 
-Not through interface similarity.
+> Standard X is insecure.
 
-Not through unsupported compatibility labels.
+or:
 
-Through explicit assumptions, mathematical models, executable behavior,
-deterministic experiments, invariants, reconciliation, and bounded evidence.
+> Protocol Y is incompatible.
+
+The narrower statement is more useful because it is:
+
+* reproducible;
+* reviewable;
+* falsifiable;
+* attributable;
+* bounded;
+* extensible.
+
+---
+
+## 23. Research Direction
+
+SPECTRA ultimately investigates one recurring systems question:
+
+> **When does an abstraction stop preserving the economic and security meaning of the system beneath it?**
+
+The project approaches that question incrementally:
+
+```text
+Amount
+  ↓
+DecimalScale
+  ↓
+State Transition
+  ↓
+Asset Semantics
+  ↓
+Standard Manifest
+  ↓
+Adversarial Variant
+  ↓
+Deterministic Trace
+  ↓
+Invariant Evaluation
+  ↓
+Accounting
+  ↓
+Settlement
+  ↓
+Cross-Domain Reconciliation
+```
+
+SPECTRA does not attempt to make heterogeneous asset systems appear uniform.
+
+It attempts to make their differences **observable, reproducible, and semantically attributable**.
+
+The governing discipline is:
+
+> **Do not infer equivalence from interface shape.**
+> **Do not infer correctness from execution success.**
+> **Do not infer settlement from observation.**
+> **Do not infer security from a passing test.**
+> **Preserve the evidence chain from specification to state transition to economic consequence.**
+
+The ultimate objective is not another compatibility matrix.
+
+It is a reproducible method for answering:
+
+```text
+What was specified?
+        ↓
+What was implemented?
+        ↓
+What actually executed?
+        ↓
+What was observed?
+        ↓
+What state was realized?
+        ↓
+What quantity was accounted?
+        ↓
+What condition was settled?
+        ↓
+Where, if anywhere, did semantic preservation fail?
+```
+
+**SPECTRA is an attempt to turn that chain into an executable research instrument.**
