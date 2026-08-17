@@ -1077,6 +1077,7 @@ The governing discipline is:
 > **Do not infer security from a passing test.**
 > **Preserve the evidence chain from specification to state transition to economic consequence.**
 
+
 The ultimate objective is not another compatibility matrix.
 
 It is a reproducible method for answering:
