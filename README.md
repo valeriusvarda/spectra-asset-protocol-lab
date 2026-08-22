@@ -62,7 +62,6 @@ The project therefore treats compatibility as a hypothesis requiring evidence, n
 
 ---
 
-
 ## 2. Research Thesis
 
 SPECTRA begins from the following falsifiable thesis:
