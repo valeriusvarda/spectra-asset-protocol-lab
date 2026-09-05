@@ -11,6 +11,12 @@ models, evidence rules, findings, and limitations used by SPECTRA.
 | `state-model.md`       | Working Specification v0.1.1 | Defines state boundaries, transition semantics, reachability, reconciliation conditions, and foundational invariants |
 | `numeric-semantics.md` | Working Specification v0.1.0 | Defines amount, scale, exact-representation, conversion-policy, asset-identity, and numeric evidence boundaries       |
 
+
+## Active Research Work
+
+- **#6 — Numeric-semantics review checkpoint** — active review gate before executable `DecimalScale` work.
+- **#5 — Executable `DecimalScale` domain primitive** — implementation work intentionally follows completion of the review checkpoint.
+
 ## Planned Documents
 
 Documents are introduced only when they contain substantive and reviewable
